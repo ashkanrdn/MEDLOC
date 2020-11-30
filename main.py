@@ -102,7 +102,7 @@ cluster_post_arguments.add_argument("selected features", type=str, action='appen
 cluster_post_arguments.add_argument("number of clusters", type=int)
 
 
-@app.route('/get_cluster', methods=['POST'])
+@app.route('/get_cluster/', methods=['POST'])
 
 def post_data():
     
