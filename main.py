@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
 import pandas as pd
 import io
@@ -126,7 +126,8 @@ def post_data():
     #number_of_cluster = request.form['number of clusters']
 
     cluster_data = cluster_generator(data, selected_attributes, number_of_cluster)
-    return jsonify(cluster_data)
+    resp = jsonify(cluster_data)
+    return resp
 
 #Run 
 if __name__ == "__main__":
