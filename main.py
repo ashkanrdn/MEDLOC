@@ -126,8 +126,8 @@ def post_data():
     #number_of_cluster = request.form['number of clusters']
 
     cluster_data = cluster_generator(data, selected_attributes, number_of_cluster)
-    resp = jsonify(cluster_data)
-    return resp
+    #return make_response(jsonify(cluster_data))
+    return json.dumps(cluster_data)
 
 #Run 
 if __name__ == "__main__":
