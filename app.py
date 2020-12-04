@@ -4,6 +4,7 @@ import pandas as pd
 import io
 import requests
 import json
+from flask_cors import CORS
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 
@@ -85,16 +86,18 @@ def cluster_generator(data,features=None,n_clusters=5):
 
     #Remove all columns of the selected attributes to only leave cluster and fid 
     clean_data_frame = data_frame.drop(features, axis=1)
-
+    clean_data = {key:int(value) for key,value in zip(fid_column,clusters)}
+    # {fid : {cluster:cluster_number, cent_distance: distance,UMAP:[X,Y],}
     #Turn the data into a a JSON file
     #clean data frame only contatins fid & cluster
     #data frame contains fid, cluster & the other selected attributes / Mainly used for plotting
-    return {"clean_data":clean_data_frame.to_json(), 
+    return {"clean_data":clean_data, 
             "selected_data":data_frame.to_json()}
 
 #Creation of the Flask Application
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 #List of required arguments
 cluster_post_arguments = reqparse.RequestParser()
