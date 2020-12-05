@@ -4,7 +4,7 @@ import pandas as pd
 import io
 import requests
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 
@@ -97,7 +97,7 @@ def cluster_generator(data,features=None,n_clusters=5):
 #Creation of the Flask Application
 app = Flask(__name__,static_folder='./build', static_url_path='/')
 api = Api(app)
-CORS(app)
+CORS(app,support_credentials=True)
 
 #List of required arguments
 cluster_post_arguments = reqparse.RequestParser()
@@ -106,7 +106,8 @@ cluster_post_arguments.add_argument("selected features", type=str, action='appen
 cluster_post_arguments.add_argument("number of clusters", type=int)
 
 
-@app.route('/')
+@app.route('/',methods=['POST', 'GET', 'OPTIONS'])
+@cross_origin(supports_credentials=True)
 def index():
     return app.send_static_file('index.html')
 
