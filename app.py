@@ -1,4 +1,4 @@
-pifrom flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
 import pandas as pd
 import io
