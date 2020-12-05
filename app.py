@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+pifrom flask import Flask, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
 import pandas as pd
 import io
@@ -10,7 +10,7 @@ from sklearn.cluster import KMeans
 
 '''
 Function to get all the data from the github repo
-and prepare it, by cleaning categorical data from 
+and prepare it, by cleaning categorical data from
 it and eliminating part of the geolocation data
 '''
 def get_data(url):
@@ -32,7 +32,7 @@ def get_data(url):
 
     #List of columns to exclude
     columns_to_exclude = ['id', 'top', 'right', 'bottom',"predominant_race_by_population_per_cell"]
-    
+
     #Find all the columns that contain the word "name" / Find all columns with categorical data with "Name"
     withName = [i for i in df.columns if "name" in i]
 
@@ -66,7 +66,7 @@ def cluster_generator(data,features=None,n_clusters=5):
 
     #Normalize all the values in data set to fit between 0 to 1
     data_frame[data_frame.columns] = min_max_scaler.fit_transform(data_frame)
-    
+
     #Get all the features in the data set
     if features:
         data_frame = data_frame[features]
@@ -76,7 +76,7 @@ def cluster_generator(data,features=None,n_clusters=5):
 
     #Fit the data to generate clusters based on selected attributes
     kmeans = kmeans.fit(data_frame)
-    
+
     #Get the newly made clusters
     clusters = kmeans.labels_
 
@@ -84,18 +84,18 @@ def cluster_generator(data,features=None,n_clusters=5):
     data_frame['fid'] = fid_column
     data_frame["clusters"] = clusters
 
-    #Remove all columns of the selected attributes to only leave cluster and fid 
+    #Remove all columns of the selected attributes to only leave cluster and fid
     clean_data_frame = data_frame.drop(features, axis=1)
     clean_data = {key:int(value) for key,value in zip(fid_column,clusters)}
     # {fid : {cluster:cluster_number, cent_distance: distance,UMAP:[X,Y],}
     #Turn the data into a a JSON file
     #clean data frame only contatins fid & cluster
     #data frame contains fid, cluster & the other selected attributes / Mainly used for plotting
-    return {"clean_data":clean_data, 
+    return {"clean_data":clean_data,
             "selected_data":data_frame.to_json()}
 
 #Creation of the Flask Application
-app = Flask(__name__)
+app = Flask(__name__,static_folder='./build', static_url_path='/')
 api = Api(app)
 CORS(app)
 
@@ -108,19 +108,19 @@ cluster_post_arguments.add_argument("number of clusters", type=int)
 
 @app.route('/')
 def index():
-    return "<h1>Welcome to MedLoc Server API System!</h1>"
+    return app.send_static_file('index.html')
 
 @app.route('/get_cluster/', methods=['POST'])
 
 def post_data():
-    
+
     #Github URL data repo location
     github_url = "https://github.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/raw/main/Data%20Pipeline/hexagon_collection_master.geojson"
 
     #Get and clean data from the github repo & test variables
     #Data to send to the API
     data = get_data(github_url)
-    
+
     #Define and get arguments from request
     arguments = cluster_post_arguments.parse_args()
     selected_attributes = arguments['selected features']
@@ -130,15 +130,15 @@ def post_data():
 
     #Run Kmeans cluster algorithm
     cluster_data = cluster_generator(data, selected_attributes, number_of_cluster)
-    
+
     #Testing alternatives
     #return make_response(jsonify(cluster_data))
     #return "<body><pre style ='word-wrap: break-word; white-space: pre-wrap;'>" + json.dumps(cluster_json) + "</pre></body>"
     #return json.dumps(cluster_data)
-    
+
     #For debuging
     #print(cluster_data)
     return cluster_data
-#Run 
+#Run
 if __name__ == "__main__":
     app.run(debug=True)
