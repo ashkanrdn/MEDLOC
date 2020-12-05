@@ -1,0 +1,196 @@
+:root {
+    --main-radius: 5px;
+    background: #2c698d;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: #f1f1f1;
+}
+
+.containerDash {
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 0.3fr 0.8fr 0.7fr 0.5fr 0.5fr 0.5fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr 1fr;
+    grid-template-areas: "nav nav nav nav nav nav"/*Nav */
+    /*Content 4    Map */
+    "sidebar content4 content4 content5 content5 content5 "/*Content 4    Map */
+    /*Content 4    Map */
+    "sidebar content7 content7 main main main"/*Sidebar  ListSelector    Map */
+    /*Content 4    Map */
+    "sidebar content7 content7 content6 content6 content6"/*Content 4    Map */
+    ;
+    grid-gap: 0.5rem;
+    font-weight: 400;
+    /* text-transform: uppercase; */
+    /* font-size: 0.6rem; */
+    color: #383838;
+    background: #d3d3d3;
+    padding: 10px;
+}
+
+.generalComp {
+    background: #ececec;
+}
+
+.navDash {
+    background: none;
+    grid-area: nav;
+    padding-top: var(--main-padding);
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+}
+
+.mainDash {
+    grid-area: main;
+    height: 100%;
+    background: #f4f4ff;
+}
+
+.sidebarDash {
+    grid-area: sidebar;
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    width: 310px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content1 {
+    grid-area: content1;
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content2 {
+    grid-area: content2;
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content3 {
+    grid-area: content3;
+    border-radius: var(--main-radius);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content4 {
+    grid-area: content4;
+    height: '100%';
+    overflow: hidden;
+    line-height: '300px';
+    border-radius: var(--main-radius);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content5 {
+    grid-area: content5;
+    overflow: hidden;
+    border-radius: var(--main-radius);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content6 {
+    grid-area: content6;
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content7 {
+    grid-area: content7;
+    height: '100%';
+    overflow: hid;
+    line-height: '300px';
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.content8 {
+    grid-area: content8;
+    height: '100%';
+    overflow: auto;
+    line-height: '300px';
+    border-radius: var(--main-radius);
+    padding-top: var(--main-padding);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+a {
+    text-align: center;
+    display: block;
+    font-family: inherit;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 1rem;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+.legend {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+    padding-left: 29px;
+}
+
+.titleMap {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+    max-width: 100px;
+    padding: 5px;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    margin-right: 8px;
+    opacity: 0.7;
+    left: 5px;
+}
+
+
+/* @media all */
+
+
+/* @media only screen and (max-width: 550px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.4fr 0.4fr 2.2fr 1.2fr 1.2fr 1.2fr 1fr;
+        grid-template-areas: "nav" "sidebar" "main" "content1" "content2" "content3" "footer";
+    } */
+
+
+/*
+
+
+
+} */
