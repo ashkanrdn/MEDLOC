@@ -56,7 +56,7 @@ def get_data(url):
 Funtion to generate a set of cluster based on the desired
 attributes and selectec number of clusters
 '''
-def cluster_generator(data,features=None,n_clusters=5):
+def kmeans_cluster_generator(data,features=None,n_clusters=5):
     #Convert the json data into a pandas data frame
     data_frame = pd.read_json(data)
     fid_column = data_frame['fid']
@@ -79,20 +79,51 @@ def cluster_generator(data,features=None,n_clusters=5):
 
     #Get the newly made clusters
     clusters = kmeans.labels_
+    
+    #Get and store the distance to each cluster centroid
+    #Note: kmeans.transforms returns the distance to all the cluster centroids the for loop is to get the distance to the assigned cluster
+    distance_to_cluster_centroid = []
+    for i in range(len(kmeans.transform(data_frame))):
+        
+        #For debugging
+        #print (kmeans.transform(data_frame)[i][kmeans.labels_[i]])
+        distance_to_cluster_centroid.append(kmeans.transform(data_frame)[i][kmeans.labels_[i]])
 
     #Add newly labels for the cluster data to original data frame an re-add fid column
     data_frame['fid'] = fid_column
     data_frame["clusters"] = clusters
+    data_frame['distance_to_cluster_centroid'] = distance_to_cluster_centroid
 
-    #Remove all columns of the selected attributes to only leave cluster and fid
-    clean_data_frame = data_frame.drop(features, axis=1)
-    clean_data = {key:int(value) for key,value in zip(fid_column,clusters)}
-    # {fid : {cluster:cluster_number, cent_distance: distance,UMAP:[X,Y],}
-    #Turn the data into a a JSON file
-    #clean data frame only contatins fid & cluster
-    #data frame contains fid, cluster & the other selected attributes / Mainly used for plotting
-    return {"clean_data":clean_data,
-            "selected_data":data_frame.to_json()}
+    #Convert data frame into json format
+    clean_data = data_frame.to_json(orient='index')
+    parsed = json.loads(clean_data)
+    
+    #Remap the keys of the json format to be the fid of the hexagon cells
+    stored_data = []
+    for data in range(len(parsed)):
+        all_the_data = parsed[str(data)]
+        stored_data.append(all_the_data)
+
+    lean_data = {int(key):value for key,value in zip(fid_column,stored_data)}
+
+    '''
+    Example of data structure
+
+    Data is organized by hexagonal grid cell which contains all the information
+    that was requested for the clustes, additional to the cluster number, 
+    and the distance from the cluster centroid
+
+    "1": {
+        "adult_obesity": 0.3087912088,
+        "clusters": 0,
+        "distance_to_cluster_centroid": 0.13183805,
+        "fid": 1,
+        "nearest_hospital_distance": 0.0880002894,
+        "population_no_health_insurance": 0.5324675325
+    },
+    '''
+    
+    return lean_data
 
 #Creation of the Flask Application
 app = Flask(__name__,static_folder='./build', static_url_path='/')
@@ -111,7 +142,7 @@ cluster_post_arguments.add_argument("number of clusters", type=int)
 def index():
     return app.send_static_file('index.html')
 
-@app.route('/get_cluster/', methods=['POST'])
+@app.route('/get_kmeans_cluster/', methods=['POST'])
 
 def post_data():
 
@@ -130,7 +161,7 @@ def post_data():
     #number_of_cluster = request.form['number of clusters']
 
     #Run Kmeans cluster algorithm
-    cluster_data = cluster_generator(data, selected_attributes, number_of_cluster)
+    cluster_data = kmeans_cluster_generator(data, selected_attributes, number_of_cluster)
 
     #Testing alternatives
     #return make_response(jsonify(cluster_data))
