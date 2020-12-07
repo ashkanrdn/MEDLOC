@@ -194,12 +194,12 @@ function DashApp() {
             className="content6 generalComp"
             style={{ display: "flex", flexDirection: "row" }}
           >
-            <div style={{ height: "100%", width: "50%", flexGrow: "1" }}>
+            <BoxPlot data={data} columnName={userSelected} />
+            <div style={{ height: "100%", width: "100%", flexGrow: "1" }}>
               {" "}
-              {/* <BoxPlot /> */}
-              <h6>mamad</h6>
+              {/* <h6>mamad</h6> */}
             </div>
-            <div style={{ height: "100%", width: "50%", flexGrow: "1" }}> </div>
+            {/* <div style={{ height: "100%", width: "50%", flexGrow: "1" }}> </div> */}
           </div>
 
           {/* ------------------ Machine Learning Control ------------------*/}

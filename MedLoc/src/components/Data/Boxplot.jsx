@@ -1,32 +1,34 @@
-import React from 'react';
+import React from "react";
 import {
-	VictoryChart,
-	VictoryZoomContainer,
-	VictoryLine,
-	VictoryBrushContainer,
-	VictoryAxis,
-	VictoryTheme,
-	VictoryBoxPlot
-} from 'victory';
+  VictoryChart,
+  VictoryZoomContainer,
+  VictoryLine,
+  VictoryBrushContainer,
+  VictoryAxis,
+  VictoryTheme,
+  VictoryBoxPlot,
+} from "victory";
 
 class Boxplot extends React.Component {
-	constructor () {
-		super();
-		this.state = {};
-	}
+  //   constructor() {
+  //     super();
+  //     this.state = {};
+  //   }
+  state = {};
 
-	handleZoom (domain) {
-		this.setState({ selectedDomain: domain });
-	}
+  handleZoom(domain) {
+    this.setState({ selectedDomain: domain });
+  }
 
-	handleBrush (domain) {
-		this.setState({ zoomDomain: domain });
-	}
+  handleBrush(domain) {
+    this.setState({ zoomDomain: domain });
+  }
 
-	render () {
-		return (
-			<div>
-				{/* <VictoryChart
+  render() {
+    console.log(this.data);
+    return (
+      <div>
+        {/* <VictoryChart
 					width={550}
 					height={300}
 					scale={{ x: 'time' }}
@@ -99,32 +101,33 @@ class Boxplot extends React.Component {
 					/>
 				</VictoryChart> */}
 
-				<VictoryChart
-					domainPadding={20}
-					width={500}
-					height={400}
-					theme={VictoryTheme.material}
-					colorScale={'warm'}
-					containerComponent={
-						<VictoryZoomContainer
-							responsive={false}
-							zoomDimension='x'
-							zoomDomain={this.state.zoomDomain}
-							onZoomDomainChange={this.handleZoom.bind(this)}
-						/>
-					}>
-					<VictoryBoxPlot
-						boxWidth={20}
-						data={[
-							{ x: 1, y: [ 1, 2, 3, 5 ] },
-							{ x: 2, y: [ 3, 2, 8, 10 ] },
-							{ x: 3, y: [ 2, 8, 6, 5 ] },
-							{ x: 4, y: [ 1, 3, 2, 9 ] }
-						]}
-					/>
-				</VictoryChart>
-			</div>
-		);
-	}
+        <VictoryChart
+          domainPadding={20}
+          width={500}
+          height={400}
+          theme={VictoryTheme.material}
+          colorScale={"warm"}
+          containerComponent={
+            <VictoryZoomContainer
+              responsive={false}
+              zoomDimension="x"
+              zoomDomain={this.state.zoomDomain}
+              onZoomDomainChange={this.handleZoom.bind(this)}
+            />
+          }
+        >
+          <VictoryBoxPlot
+            // boxWidth={20}
+            data={this.props.data.features.map((f) => {
+              return {
+                x: f.properties.clusters,
+                y: f.properties[this.props.columnName],
+              };
+            })}
+          />
+        </VictoryChart>
+      </div>
+    );
+  }
 }
 export default Boxplot;

@@ -126,7 +126,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
     return lean_data
 
 #Creation of the Flask Application
-app = Flask(__name__,static_folder='./build', static_url_path='/')
+app = Flask(__name__,static_folder='./MedLoc/build', static_url_path='/')
 api = Api(app)
 CORS(app,support_credentials=True)
 
@@ -143,7 +143,6 @@ def index():
     return app.send_static_file('index.html')
 
 @app.route('/get_kmeans_cluster/', methods=['POST'])
-
 def post_data():
 
     #Github URL data repo location
