@@ -55,7 +55,9 @@ function DashApp() {
     axios
       .get(fetchUrl)
       .then((res) => {
-        setData(res.data);
+        let data = res.data;
+        data.features.forEach((f) => (f.properties.clusters = "0"));
+        setData(data);
       })
       .catch((err) => {
         console.log(err.message);
@@ -109,7 +111,20 @@ function DashApp() {
         },
       })
       .then(function (response) {
-        console.log(response);
+        let responseData = response.data;
+        console.log(responseData);
+        let fidClusterMap = {};
+        Object.keys(responseData).forEach((f) => {
+          f = responseData[f];
+          fidClusterMap[f.fid] = f.clusters.toString();
+        });
+        console.log(fidClusterMap);
+        let dataCopy = JSON.parse(JSON.stringify(data));
+        dataCopy.features.forEach((f) => {
+          f.properties.clusters = fidClusterMap[f.properties.fid];
+        });
+        console.log(dataCopy.features.map((f) => f.properties.clusters));
+        setData(dataCopy);
       })
       .catch(function (error) {
         console.log(error);
@@ -161,9 +176,14 @@ function DashApp() {
           <div className="content5 generalComp">
             <h6 style={{ margin: "5px", padding: "3px" }}> Model View </h6>
             <span>
-              <Mainmap
+              {/* <Mainmap
                 dataProps={data}
-                userSelectedItems={userSelected}
+                userSelectedItems={"clusters"}
+                userClickedProp={userClicked}
+              /> */}
+              <PreviewMap
+                dataProps={data}
+                userSelectedItems={"clusters"}
                 userClickedProp={userClicked}
               />
             </span>
