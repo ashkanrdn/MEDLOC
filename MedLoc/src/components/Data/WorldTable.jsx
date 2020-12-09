@@ -76,8 +76,11 @@ class WorldTable extends React.Component {
 			);
 		}
 		// let columnValues1 = [ "fid" ];
-		let columnValues = userFeaturesOriginal.map((f) => ({ name: f, label: f.slice(0, 20) }));
-		columnValues.push("fid");
+		let columnValues = userFeaturesOriginal.map((f) => ({
+			name: f,
+			label: f.slice(0, 20) + "...",
+			options: { hint: f }
+		}));
 
 		columnValues.reverse();
 		// console.log(columnValues);
