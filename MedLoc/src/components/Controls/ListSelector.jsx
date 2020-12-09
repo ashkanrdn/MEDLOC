@@ -26,20 +26,20 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: "2px",
 		padding: "5px",
-		fontSize: "0.4rem"
+		fontSize: "8px"
 	},
 	cardHeader: {
 		padding: theme.spacing(1, 2)
 	},
 	list: {
 		width: 280,
-		height: "200px",
+		height: "250px",
 		backgroundColor: theme.palette.background.paper,
 		overflow: "auto",
 		textTransform: "capitalize"
 	},
 	MuiTypography: {
-		fontSize: "0.1rem"
+		fontSize: "8px"
 	},
 	button: {
 		margin: theme.spacing(1, 1)

@@ -104,7 +104,7 @@ class WorldTable extends React.Component {
 								filterType: "dropdown",
 
 								responsive: "stacked",
-								tableBodyHeight: "27vh",
+								tableBodyHeight: "30vh",
 								draggableColumns: { enabled: true, transitionTime: 300 },
 								rowsPerPageOptions: [ 5, 10, 50 ],
 								rowsPerPage: 5,

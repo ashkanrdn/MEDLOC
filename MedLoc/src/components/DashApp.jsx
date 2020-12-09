@@ -31,208 +31,197 @@ import Navbar from "./Interface/Navbar";
 
 // ____________________________________APP____________________________________
 
-function DashApp() {
-  // To Do : useMemo hook for improving performance for the functions that are heavy
-  const stageCanvasRef = useRef(null);
-  const [divHeight, setDivHeight] = useState("200px");
+function DashApp (){
+	// To Do : useMemo hook for improving performance for the functions that are heavy
+	const stageCanvasRef = useRef(null);
+	const [ divHeight, setDivHeight ] = useState("200px");
 
-  useEffect(() => {
-    // The 'current' property contains info of the reference:
-    // align, title, ... , width, height, etc.
-    if (stageCanvasRef.current) {
-      setDivHeight(stageCanvasRef.current.offsetHeight);
-      // let width  = stageCanvasRef.current.offsetWidth;
-    }
-  });
+	useEffect(() => {
+		// The 'current' property contains info of the reference:
+		// align, title, ... , width, height, etc.
+		if (stageCanvasRef.current) {
+			setDivHeight(stageCanvasRef.current.offsetHeight);
+			// let width  = stageCanvasRef.current.offsetWidth;
+		}
+	});
 
-  //Fetching data
-  const fetchUrl =
-    "https://raw.githubusercontent.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/main/Data%20Pipeline/hexagon_collection_master.geojson";
+	//Fetching data
+	const fetchUrl =
+		"https://raw.githubusercontent.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/main/Data%20Pipeline/hexagon_collection_master.geojson";
 
-  const [data, setData] = useState(null);
+	const [ data, setData ] = useState(null);
 
-  async function getData() {
-    axios
-      .get(fetchUrl)
-      .then((res) => {
-        let data = res.data;
-        data.features.forEach((f) => (f.properties.clusters = "0"));
-        setData(data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
-  useEffect(() => {
-    getData();
-  }, []);
+	async function getData (){
+		axios
+			.get(fetchUrl)
+			.then((res) => {
+				let data = res.data;
+				data.features.forEach((f) => (f.properties.clusters = "0"));
+				setData(data);
+			})
+			.catch((err) => {
+				console.log(err.message);
+			});
+	}
+	useEffect(() => {
+		getData();
+	}, []);
 
-  // State for getting user selected feature which will be passed to maps
-  const [userSelected, setUserSelected] = useState("Preview_Map");
-  console.log(userSelected, "mamad");
+	// State for getting user selected feature which will be passed to maps
+	const [ userSelected, setUserSelected ] = useState("Preview_Map");
 
-  // state for maps
-  const [userClicked, setUserClicked] = useState(false);
+	// state for maps
+	const [ userClicked, setUserClicked ] = useState(false);
 
-  // state for toggle between table and viz
-  const [checkedMain, setCheckedMain] = React.useState(false);
-  const toggleCheckedMain = () => {
-    setCheckedMain((prev) => !prev);
-  };
+	// state for toggle between table and viz
+	const [ checkedMain, setCheckedMain ] = React.useState(false);
+	const toggleCheckedMain = () => {
+		setCheckedMain((prev) => !prev);
+	};
 
-  // Sate for getting features user selected for running the model
-  const [userFeatures, setUserFeatures] = useState(null);
+	// Sate for getting features user selected for running the model
+	const [ userFeatures, setUserFeatures ] = useState(null);
 
-  // State for submit
+	// State for submit
 
-  const [userSubmit, setUserSubmit] = useState(false);
-  const toggleSubmit = () => {
-    setUserSubmit((prev) => !prev);
-  };
+	const [ userSubmit, setUserSubmit ] = useState(false);
+	const toggleSubmit = () => {
+		setUserSubmit((prev) => !prev);
+	};
 
-  // Sending POST request to ML API using axios
+	// Sending POST request to ML API using axios
 
-  const handleSubmit = (clusterNum, Features) => {
-    let mlApiUrl = "/get_kmeans_cluster/";
-    // replacing space with _ for sending to serve
-    let featuresToAPI = Features.map((item) => item.replace(/ /g, "_"));
-    let mlRequest = {
-      "selected features": featuresToAPI,
-      "number of clusters": clusterNum,
-    };
-    console.log(mlRequest);
-    axios
-      .post(mlApiUrl, JSON.stringify(mlRequest), {
-        withCredentials: true,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then(function (response) {
-        let responseData = response.data;
-        console.log(responseData);
-        let fidClusterMap = {};
-        Object.keys(responseData).forEach((f) => {
-          f = responseData[f];
-          fidClusterMap[f.fid] = f.clusters.toString();
-        });
-        console.log(fidClusterMap);
-        let dataCopy = JSON.parse(JSON.stringify(data));
-        dataCopy.features.forEach((f) => {
-          f.properties.clusters = fidClusterMap[f.properties.fid];
-        });
-        console.log(dataCopy.features.map((f) => f.properties.clusters));
-        setData(dataCopy);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+	const handleSubmit = (clusterNum, Features) => {
+		let mlApiUrl = "/get_kmeans_cluster/";
+		// replacing space with _ for sending to serve
+		let featuresToAPI = Features.map((item) => item.replace(/ /g, "_"));
+		let mlRequest = {
+			"selected features": featuresToAPI,
+			"number of clusters": clusterNum
+		};
+		console.log(mlRequest);
+		axios
+			.post(mlApiUrl, JSON.stringify(mlRequest), {
+				withCredentials: true,
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+					Accept: "application/json",
+					"Content-Type": "application/json"
+				}
+			})
+			.then(function (response){
+				let responseData = response.data;
 
-  return (
-    <div className="App">
-      {data !== null ? (
-        <div class="containerDash">
-          {/* ------------------ NavBar ------------------*/}
-          <nav className="navDash generalComp">
-            <Navbar />
-          </nav>
+				let fidClusterMap = {};
+				Object.keys(responseData).forEach((f) => {
+					f = responseData[f];
+					fidClusterMap[f.fid] = f.clusters.toString();
+				});
 
-          {/*  ------------------Map History Browser ------------------  */}
-          <div className="mainDash generalComp">
-            <Synthesizer />
-          </div>
+				let dataCopy = JSON.parse(JSON.stringify(data));
+				dataCopy.features.forEach((f) => {
+					f.properties.clusters = fidClusterMap[f.properties.fid];
+				});
+				console.log(dataCopy.features.map((f) => f.properties.clusters));
+				setData(dataCopy);
+			})
+			.catch(function (error){
+				console.log(error);
+			});
+	};
 
-          {/*  ------------------ Data Selector ------------------ */}
+	return (
+		<div className='App'>
+			{
+				data !== null ? <div class='containerDash'>
+					{/* ------------------ NavBar ------------------*/}
+					<nav className='navDash generalComp'>
+						<Navbar />
+					</nav>
 
-          <div className="sidebarDash generalComp">
-            <ListSelector
-              dataProps={data}
-              methodProps={setUserSelected}
-              featureProps={setUserFeatures}
-              handleSubmit={handleSubmit}
-              userFeatures={userFeatures}
-            />
-            <MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />
-          </div>
+					{/*  ------------------Map History Browser ------------------  */}
+					<div className='mainDash generalComp'>
+						<Synthesizer />
+					</div>
 
-          {/*  ------------------ Map Preview ------------------*/}
-          <div
-            style={{ position: "relative" }}
-            className="content4 generalComp"
-          >
-            <h6 style={{ marginTop: "5px", padding: "3px" }}> Preview Map </h6>
-            <span>
-              <PreviewMap
-                dataProps={data}
-                userSelectedItems={userSelected}
-                userClickedProp={userClicked}
-              />
-            </span>
-          </div>
-          {/* ------------------ Main Map ------------------*/}
-          <div className="content5 generalComp">
-            <h6 style={{ margin: "5px", padding: "3px" }}> Model View </h6>
-            <span>
-              {/* <Mainmap
+					{/*  ------------------ Data Selector ------------------ */}
+
+					<div className='sidebarDash generalComp' style={{ padding: "5px" }}>
+						<ListSelector
+							dataProps={data}
+							methodProps={setUserSelected}
+							featureProps={setUserFeatures}
+							handleSubmit={handleSubmit}
+							userFeatures={userFeatures}
+						/>
+						<MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />
+					</div>
+
+					{/*  ------------------ Map Preview ------------------*/}
+					<div className='content4 generalComp'>
+						<h6 style={{ padding: "5px" }}> Preview Map </h6>
+						<span>
+							<PreviewMap
+								dataProps={data}
+								userSelectedItems={userSelected}
+								userClickedProp={userClicked}
+							/>
+						</span>
+					</div>
+					{/* ------------------ Main Map ------------------*/}
+					<div className='content5 generalComp'>
+						<h6 style={{ padding: "5px" }}> Model View </h6>
+						<span>
+							{/* <Mainmap
                 dataProps={data}
                 userSelectedItems={"clusters"}
                 userClickedProp={userClicked}
               /> */}
-              <PreviewMap
-                dataProps={data}
-                userSelectedItems={"clusters"}
-                userClickedProp={userClicked}
-              />
-            </span>
-          </div>
+							<PreviewMap
+								dataProps={data}
+								userSelectedItems={"clusters"}
+								userClickedProp={userClicked}
+							/>
+						</span>
+					</div>
 
-          {/* ------------------ Mix Viz ------------------*/}
-          <div
-            className="content6 generalComp"
-            style={{ display: "flex", flexDirection: "row" }}
-          >
-            <BoxPlot data={data} columnName={userSelected} />
-            <div style={{ height: "100%", width: "100%", flexGrow: "1" }}>
-              {" "}
-              {/* <h6>mamad</h6> */}
-            </div>
-            {/* <div style={{ height: "100%", width: "50%", flexGrow: "1" }}> </div> */}
-          </div>
+					{/* ------------------ Mix Viz ------------------*/}
+					<div
+						className='content6 generalComp'
+						style={{ display: "flex", flexDirection: "row" }}>
+						<BoxPlot data={data} columnName={userSelected} />
+					</div>
 
-          {/* ------------------ Machine Learning Control ------------------*/}
-          {/* <div className='content8 generalComp'>
+					{/* ------------------ Machine Learning Control ------------------*/}
+					{/* <div className='content8 generalComp'>
 
 					</div> */}
 
-          {/* ----------- Data Table /Viz ------------------ */}
-          <div className="content7 generalComp" id="tble" ref={stageCanvasRef}>
-
-                <WorldTable
-                  dataProps={data}
-                  userFeaturesProps={userFeatures}
-                  heightProp={divHeight}
-                />
-
-
-        </div>
-      ) : (
-        // Loading
-        <div
-          style={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Loading />
-        </div>
-      )}
-    </div>
-  );
+					{/* ----------- Data Table /Viz ------------------ */}
+					<div
+						className='content7 generalComp'
+						id='tble'
+						ref={stageCanvasRef}
+						style={{ padding: "5px" }}>
+						<WorldTable
+							dataProps={data}
+							userFeaturesProps={userFeatures}
+							heightProp={divHeight}
+						/>
+					</div>
+				</div> :
+				// Loading
+				<div
+					style={{
+						height: "100vh",
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center"
+					}}>
+					<Loading />
+				</div>}
+		</div>
+	);
 }
 
 export default DashApp;

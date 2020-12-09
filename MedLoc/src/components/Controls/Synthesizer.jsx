@@ -6,7 +6,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-
+import Paper from "@material-ui/core/Paper";
 function a11yProps (index){
 	return {
 		id: `scrollable-auto-tab-${index}`,
@@ -15,9 +15,11 @@ function a11yProps (index){
 }
 
 const useStyles = makeStyles((theme) => ({
+	tabsRoot: { height: "30px" },
+	tabRoot: { height: "42px" },
 	root: {
 		width: "100%",
-		height: "100%"
+		height: "50%"
 	}
 }));
 
@@ -29,8 +31,9 @@ export default function Synthesizer (){
 	};
 
 	return (
-		<AppBar position='static' color='red'>
+		<Paper square>
 			<Tabs
+				style={{ height: "30px" }}
 				value={value}
 				onChange={handleChange}
 				indicatorColor='primary'
@@ -46,6 +49,6 @@ export default function Synthesizer (){
 				<Tab label='Iteration Six' {...a11yProps(5)} />
 				<Tab label='Iteration Seven' {...a11yProps(6)} />
 			</Tabs>
-		</AppBar>
+		</Paper>
 	);
 }
