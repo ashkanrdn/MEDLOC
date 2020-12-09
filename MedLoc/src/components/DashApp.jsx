@@ -209,25 +209,14 @@ function DashApp() {
 
           {/* ----------- Data Table /Viz ------------------ */}
           <div className="content7 generalComp" id="tble" ref={stageCanvasRef}>
-            <Toggle
-              style={{ margin: "5px" }}
-              toggleProps={toggleCheckedMain}
-              checkedProps={checkedMain}
-            />
-            {checkedMain === false ? (
-              <div>
+
                 <WorldTable
                   dataProps={data}
                   userFeaturesProps={userFeatures}
                   heightProp={divHeight}
                 />
-              </div>
-            ) : (
-              <div style={{ height: "95%" }}>
-                <Viz />
-              </div>
-            )}
-          </div>
+
+
         </div>
       ) : (
         // Loading
