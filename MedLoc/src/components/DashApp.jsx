@@ -172,11 +172,6 @@ function DashApp (){
 					<div className='content5 generalComp'>
 						<h6 style={{ padding: "5px" }}> Model View </h6>
 						<span>
-							{/* <Mainmap
-                dataProps={data}
-                userSelectedItems={"clusters"}
-                userClickedProp={userClicked}
-              /> */}
 							<PreviewMap
 								dataProps={data}
 								userSelectedItems={"clusters"}
@@ -188,22 +183,18 @@ function DashApp (){
 					{/* ------------------ Mix Viz ------------------*/}
 					<div
 						className='content6 generalComp'
-						style={{ display: "flex", flexDirection: "row" }}>
+						style={{
+							display: "grid",
+
+							placeItems: "center"
+						}}>
 						<BoxPlot data={data} columnName={userSelected} />
 					</div>
 
-					{/* ------------------ Machine Learning Control ------------------*/}
-					{/* <div className='content8 generalComp'>
-
-					</div> */}
-
 					{/* ----------- Data Table /Viz ------------------ */}
-					<div
-						className='content7 generalComp'
-						id='tble'
-						ref={stageCanvasRef}
-						style={{ padding: "5px" }}>
+					<div className='content7 generalComp' id='tble' ref={stageCanvasRef}>
 						<WorldTable
+							style={{ padding: "5px" }}
 							dataProps={data}
 							userFeaturesProps={userFeatures}
 							heightProp={divHeight}

@@ -1,7 +1,6 @@
 import React from "react";
 import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import equal from "fast-deep-equal";
 
 class WorldTable extends React.Component {
 	constructor (props) {
@@ -81,7 +80,7 @@ class WorldTable extends React.Component {
 			label: f.slice(0, 20) + "...",
 			options: { hint: f }
 		}));
-
+		columnValues.push("fid");
 		columnValues.reverse();
 		// console.log(columnValues);
 		return (
@@ -104,7 +103,7 @@ class WorldTable extends React.Component {
 								filterType: "dropdown",
 
 								responsive: "stacked",
-								tableBodyHeight: "30vh",
+								tableBodyHeight: "25vh",
 								draggableColumns: { enabled: true, transitionTime: 300 },
 								rowsPerPageOptions: [ 5, 10, 50 ],
 								rowsPerPage: 5,
