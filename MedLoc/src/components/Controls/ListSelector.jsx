@@ -194,7 +194,7 @@ export default function TransferList (props){
 					const labelId = `transfer-list-all-item-${value}-label`;
 
 					return (
-						<ListItem key={value} role='listitem' button disableRipple='true'>
+						<ListItem key={value} role='listitem' button disableRipple={true}>
 							<Checkbox
 								fontSize='small'
 								onClick={handleToggle(value)}
