@@ -34,8 +34,8 @@ import Navbar from "./Interface/Navbar";
 function DashApp (){
 	// To Do : useMemo hook for improving performance for the functions that are heavy
 	const stageCanvasRef = useRef(null);
-	const [ divHeight, setDivHeight ] = useState("200px");
-
+	const [divHeight, setDivHeight] = useState("200px");
+	const [isSending, setIsSending] = useState(false);
 	useEffect(() => {
 		// The 'current' property contains info of the reference:
 		// align, title, ... , width, height, etc.
@@ -100,6 +100,9 @@ function DashApp (){
 			"number of clusters": clusterNum
 		};
 		console.log(mlRequest);
+
+		setIsSending(true);
+		
 		axios
 			.post(mlApiUrl, JSON.stringify(mlRequest), {
 				withCredentials: true,
@@ -124,9 +127,11 @@ function DashApp (){
 				});
 				console.log(dataCopy.features.map((f) => f.properties.clusters));
 				setData(dataCopy);
+				setIsSending(false);
 			})
 			.catch(function (error){
 				console.log(error);
+				setIsSending(false);
 			});
 	};
 
@@ -154,7 +159,16 @@ function DashApp (){
 							handleSubmit={handleSubmit}
 							userFeatures={userFeatures}
 						/>
-						<MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />
+						{
+							isSending ? <div style={{
+									height: "60px",
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center"
+								}}>
+									<Loading />
+							</div> : <MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />
+						}
 					</div>
 
 					{/*  ------------------ Map Preview ------------------*/}
