@@ -133,7 +133,7 @@ function DashApp (){
 	return (
 		<div className='App'>
 			{
-				data !== null ? <div class='containerDash'>
+				data !== null ? <div className='containerDash'>
 					{/* ------------------ NavBar ------------------*/}
 					<nav className='navDash generalComp'>
 						<Navbar />
