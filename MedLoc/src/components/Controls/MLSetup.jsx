@@ -18,9 +18,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function SimpleSelect (props){
+export default function SimpleSelect(props) {
+	let sendButtonRef = React.createRef();
+
 	const classes = useStyles();
 	const [ cluster, setCluster ] = React.useState("");
+
+	
 
 	const handleChange = (event) => {
 		setCluster(event.target.value);
@@ -52,7 +56,7 @@ export default function SimpleSelect (props){
 					</Select>
 					{/* <FormHelperText>Choose number of Clusters</FormHelperText> */}
 				</FormControl>
-				<RunButton
+				<RunButton ref={sendButtonRef}
 					propsOnClick={() => {
 						props.handleSubmit(cluster, props.userFeatures);
 					}}
