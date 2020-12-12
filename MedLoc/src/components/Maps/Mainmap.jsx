@@ -1,121 +1,197 @@
 /* eslint-disable no-unreachable */
 import React, { useState, useEffect, useRef } from "react";
-import { Map, GeoJSON, TileLayer, LayersControl, Popup } from "react-leaflet";
-// import Legend from "./Legend";
+
+import { Map, GeoJSON, TileLayer, LayersControl, MapContainer } from "react-leaflet";
+import FeatureName from "./Legend";
 import HighlightedGeoJson from "./HighlightedGeoJson";
-import L from "leaflet";
+import * as ss from "simple-statistics";
 import * as d3 from "d3";
-import dummy from "./states.json";
+import L from "leaflet";
+import Legend from "./Legend";
+// import { clustersDbscan, point, dissolve } from "@turf/turf";
 
-function Mainmap(props) {
-  //getting the first object from geojson to extract column names
+function Mainmap (props){
+	//getting the first object from geojson to extract column names
+	console.log(props.dataProps);
+	let dataPopulator = props.dataProps.features;
+	const geojson = useRef();
+	const legend = useRef(null);
+	const map = useRef();
+	const featureName = useRef(null);
 
-  let clusterViz = dummy.clean_data;
+	if (dataPopulator !== null) {
+		for (var key in dataPopulator) {
+			if (dataPopulator.hasOwnProperty(key)) {
+				let firstProp = dataPopulator[key];
+				let listItems = Object.keys(firstProp.properties);
 
-  let dataPopulator = props.dataProps.features;
-  // let dataPopulator = clusterViz;
-  const geojson = useRef();
+				// let listValue = Object.values(firstProp.properties);
 
-  // if (clusterViz !== null) {
-  // 	for (var key in clusterViz) {
-  // 		if (clusterViz.hasOwnProperty(key)) {
-  // 			let firstPropA = clusterViz[key];
-  // 			let listItemsA = Object.keys(firstPropA.properties);
-  // 			// let listValue = Object.values(firstProp.properties);
+				break;
+			}
+		}
+	}
 
-  // 			break;
-  // 		}
-  // 	}
-  // }
+	// disolving
+	// var dissolved = dissolve(dataPopulator, { propertyName: "combine" });
 
-  if (dataPopulator !== null) {
-    for (var key in dataPopulator) {
-      if (dataPopulator.hasOwnProperty(key)) {
-        let firstProp = dataPopulator[key];
-        let listItems = Object.keys(firstProp.properties);
-        // let listValue = Object.values(firstProp.properties);
+	//Getting the values from the feature and defining color ranges
+	let columnName = props.userSelectedItems;
+	let columnNameClean = columnName.replace(/_/g, " ");
 
-        break;
-      }
-    }
-  }
+	let columnValues = dataPopulator.map((f) => f.properties[columnName]);
+	let type = typeof columnValues[0];
+	let breaks;
+	let colorScale;
+	if (type !== "string") {
+		let colorsBrewer = [
+			"#f6eff7",
+			"#d0d1e6",
+			"#a6bddb",
+			"#67a9cf",
+			"#3690c0",
+			"#02818a",
+			"#016450"
+		];
+		let groups = ss.ckmeans(columnValues, 7);
+		breaks = groups.map((cluster) => {
+			return cluster[0];
+		});
 
-  //Getting the values from the feature and defining color ranges
-  let columnName = props.userSelectedItems;
-  // console.log(columnName, 'colname');
-  let columnValues = dataPopulator.map((f) => f.properties[columnName]);
-  let legendValues = d3.extent(columnValues);
-  //Linear breaks
-  let colorScale = d3
-    .scaleLinear()
-    .domain(d3.extent(columnValues))
-    .range(["coral", "blue"]);
-  //Quant Breaks
-  let colorScaleQuant = d3
-    .scaleQuantize()
-    .domain([20, 200, 400, 800])
-    .range(["coral", "green", "blue", "yellow", "blue"]);
+		//Quant Breaks
+		colorScale = d3.scaleQuantile().domain(breaks).range(colorsBrewer);
+	} else {
+		breaks = new Set(columnValues);
+		console.log(breaks);
+		colorScale = d3.scaleOrdinal().domain(breaks).range(d3.schemeCategory10);
+	}
 
-  function getColor(d) {
-    var color;
-    if (d === 5) {
-      color = "#800026";
-    } else if (d === 4) {
-      color = "#BD0026";
-    } else if (d === 3) {
-      color = "#E31A1C";
-    } else if (d === 2) {
-      color = "#FC4E2A";
-    } else if (d === 1) {
-      color = "#FD8D3C";
-    } else color = "#FEB24C";
-    return color;
-  }
+	//Coloring each feature based on the user selected values from the list selector
 
-  //Coloring each feature based on the user selected values from the list selector
-  function styles(feature) {
-    return {
-      fillColor: getColor(feature.properties[columnName]),
+	//Leaflet Components
+	const { BaseLayer, Overlay } = LayersControl;
 
-      weight: 0,
-      opacity: 1,
-      color: "white",
-      dashArray: "3",
-      fillOpacity: 1,
-    };
-  }
+	//Map center on load
+	const center = [ 41.8781, -87.6298 ];
 
-  //Leaflet Components
-  const { BaseLayer, Overlay } = LayersControl;
+	useEffect(
+		() => {
+			if (map.current) {
+				function styles (feature){
+					return {
+						fillColor: colorScale(feature.properties[columnName]),
+						weight: 0,
+						opacity: 1,
+						color: "white",
+						dashArray: "3",
+						fillOpacity: 1
+					};
+				}
 
-  //Map center on load
-  const center = [41.8781, -87.6298];
+				console.log(props.dataProps, "props");
+				geojson.current = L.geoJSON(props.dataProps, { style: styles });
+				geojson.current.eachLayer(function (layer){
+					// console.log(layer);
+					layer.bindPopup(`${columnName} : ${layer.feature.properties[columnName]}`);
+				});
+				// map.current.leafletElement.eachLayer((layer) => {
+				// 	console.log(layer);
+				// });
+				if (legend.current !== null) {
+					map.current.leafletElement.removeControl(legend.current);
+				}
+				if (geojson.current !== null) {
+					map.current.leafletElement.removeLayer(geojson.current);
+				}
+				if (featureName.current !== null) {
+					map.current.leafletElement.removeControl(featureName.current);
+				}
 
-  useEffect(() => {
-    if (geojson.current) {
-      geojson.current.leafletElement.eachLayer(function (layer) {
-        layer.bindPopup(
-          `${columnName} : ${layer.feature.properties[columnName]}`
-        );
-      });
-    }
-  }, [columnName]);
+				legend.current = L.control({ position: "topright" });
+				featureName.current = L.control({ position: "topright" });
 
-  // WIP Section end ____________________________________
+				featureName.current.onAdd = () => {
+					const div = L.DomUtil.create("div", "info titleMap");
+					div.innerHTML = `<p> ${columnNameClean}</p>`;
+					return div;
+				};
 
-  return (
-    <Map
-      attributionControl={false}
-      center={center}
-      zoom={10}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer url="https://api.mapbox.com/styles/v1/aradnia/ckfcn7zq20mfb19mswcdnhd6u/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w" />
+				legend.current.onAdd = () => {
+					const div = L.DomUtil.create("div", "info legend");
+					// const grades = [
+					// 	this.props.extentProps,
+					// 	this.props.extentProps,
+					// 	this.props.extentProps
+					// ];
+					let labels = [];
+					let from;
+					let to;
+					breaks = Array.from(breaks);
+					let breaksCopy = Array.from(breaks).slice(0, 7);
+					// console.log(breaksCopy);
+					// if (breaks > 7 && type === "string") {
+					//   breaksCopy.push("Others...");
+					// }
+					for (let i = 0; i < breaksCopy.length; i++) {
+						if (type === "number") {
+							let isinteger = breaksCopy[i] % 1 === 0;
+							from =
+								isinteger ? breaksCopy[i] :
+								breaks[i].toFixed(2);
+							to =
+								breaksCopy[i + 1] ? isinteger ? breaksCopy[i + 1] :
+								breaksCopy[i + 1].toFixed(2) :
+								breaksCopy[i + 1];
+						} else {
+							// console.log(breaksCopy[i].length);
+							// from =
+							//   breaksCopy[i].length > 20
+							//     ? `${breaksCopy[i].slice(0, 20)}...`
+							//     : breaksCopy[i];
+							// to = undefined;
+							from = breaksCopy[i];
+							to = undefined;
+						}
 
-      <GeoJSON ref={geojson} data={props.dataProps} style={styles} />
+						labels.push(
+							'<i style="background:' +
+								colorScale(breaksCopy[i]) +
+								'"></i> ' +
+								from +
+								(
+									to ? " &ndash; " + to :
+									type !== "string" ? "+" :
+									"")
+						);
+					}
 
-      {/* <Legend extentProps={legendValues} /> */}
-    </Map>
-  );
+					div.innerHTML = labels.join("<br>");
+					return div;
+				};
+				geojson.current.addTo(map.current.leafletElement);
+				featureName.current.addTo(map.current.leafletElement);
+				legend.current.addTo(map.current.leafletElement);
+			}
+		},
+		[ columnName, props.dataProps ]
+	);
+
+	// WIP Section end ____________________________________
+
+	return (
+		<Map
+			attributionControl={false}
+			ref={map}
+			center={center}
+			zoom={10}
+			style={{ height: "100%", width: "100%" }}>
+			<LayersControl position='bottomleft'>
+				<LayersControl.BaseLayer checked name='OpenStreetMap.BlackAndWhite'>
+					<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/wmts?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
+				</LayersControl.BaseLayer>
+				<LayersControl.Overlay name='Marker with popup' />
+			</LayersControl>
+		</Map>
+	);
 }
 export default Mainmap;

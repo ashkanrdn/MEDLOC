@@ -159,7 +159,7 @@ function DashApp (){
 
 					{/*  ------------------ Map Preview ------------------*/}
 					<div className='content4 generalComp'>
-						<h6 style={{ padding: "5px" }}> Preview Map </h6>
+						<h6 style={{ marginTop: "5px", padding: "5px" }}> Preview Map </h6>
 						<span>
 							<PreviewMap
 								dataProps={data}
@@ -170,9 +170,9 @@ function DashApp (){
 					</div>
 					{/* ------------------ Main Map ------------------*/}
 					<div className='content5 generalComp'>
-						<h6 style={{ padding: "5px" }}> Model View </h6>
-						<span>
-							<PreviewMap
+						<h6 style={{ marginTop: "5px", padding: "5px" }}> Model View </h6>
+						<span style={{ marginTop: "5px" }}>
+							<Mainmap
 								dataProps={data}
 								userSelectedItems={"clusters"}
 								userClickedProp={userClicked}

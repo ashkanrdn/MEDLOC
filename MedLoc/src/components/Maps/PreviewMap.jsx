@@ -91,6 +91,8 @@ function PreviewMap (props){
 						fillOpacity: 1
 					};
 				}
+
+				console.log(props.dataProps, "props");
 				geojson.current = L.geoJSON(props.dataProps, { style: styles });
 				geojson.current.eachLayer(function (layer){
 					// console.log(layer);
@@ -187,7 +189,7 @@ function PreviewMap (props){
 			center={center}
 			zoom={10}
 			style={{ height: "100%", width: "100%" }}>
-			<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckfcn7zq20mfb19mswcdnhd6u/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
+			<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/wmts?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
 		</Map>
 	);
 }
