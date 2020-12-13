@@ -8,6 +8,7 @@ import * as ss from "simple-statistics";
 import * as d3 from "d3";
 import L from "leaflet";
 import Legend from "./Legend";
+import * as turf from "@turf/turf";
 
 function MainMap (props){
 	//getting the first object from geojson to extract column names
@@ -31,6 +32,8 @@ function MainMap (props){
 			}
 		}
 	}
+
+	// var dissolved = turf.dissolve(dataPopulator, { propertyName: "fid" });
 
 	//Getting the values from the feature and defining color ranges
 	let columnName = props.userSelectedItems;
