@@ -207,10 +207,6 @@ function DashApp (){
 
 					{/*  ------------------ Map Preview ------------------*/}
 					<div className='content4 generalComp'>
-<<<<<<< HEAD
-						<h6 style={{ marginTop: "3px", padding: "5px" }}> Preview Map </h6>
-=======
->>>>>>> 1deb4d5d7ae4cb95b8bfdc4b3e7c3c29f74515e3
 						<span>
 							<PreviewMap
 								dataProps={data}
@@ -221,10 +217,6 @@ function DashApp (){
 					</div>
 					{/* ------------------ Main Map ------------------*/}
 					<div className='content5 generalComp'>
-<<<<<<< HEAD
-						<h6 style={{ marginTop: "3px", padding: "5px" }}> Model View </h6>
-=======
->>>>>>> 1deb4d5d7ae4cb95b8bfdc4b3e7c3c29f74515e3
 						<span>
 							<Mainmap
 								dataProps={data}

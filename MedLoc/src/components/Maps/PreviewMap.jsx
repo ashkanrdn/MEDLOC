@@ -200,13 +200,8 @@ function PreviewMap (props){
 			ref={map}
 			center={center}
 			zoom={10}
-<<<<<<< HEAD
-			style={{ height: "95%", width: "100%" }}>
-			<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckfcn7zq20mfb19mswcdnhd6u/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
-=======
 			style={{ height: "100%", width: "100%" }}>
 			<TileLayer url='	https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
->>>>>>> 1deb4d5d7ae4cb95b8bfdc4b3e7c3c29f74515e3
 		</Map>
 	);
 }
