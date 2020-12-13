@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -12,6 +12,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Runbutton (props){
 	const classes = useStyles();
+	const [btnNotReady, setBtnNotReady] = useState((props.loading || false))
+	
+	React.useEffect(() => {
+		setBtnNotReady(props.loading || false);
+	}, [props.loading])
 
 	return (
 		<div>
@@ -20,8 +25,9 @@ export default function Runbutton (props){
 				onClick={props.propsOnClick}
 				variant='contained'
 				color='primary'
+				disabled={btnNotReady}
 				className={classes.button}
-				endIcon={<Icon>send</Icon>}>
+				endIcon={btnNotReady ? <Icon>timer</Icon> : <Icon>send</Icon>}>
 				Run
 			</Button>
 		</div>

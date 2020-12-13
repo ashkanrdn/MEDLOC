@@ -35,6 +35,7 @@ function DashApp (){
 	// To Do : useMemo hook for improving performance for the functions that are heavy
 	const stageCanvasRef = useRef(null);
 	const [ divHeight, setDivHeight ] = useState("200px");
+	const [ isSending, setIsSending ] = useState(false);
 
 	useEffect(() => {
 		// The 'current' property contains info of the reference:
@@ -93,13 +94,18 @@ function DashApp (){
 
 	const handleSubmit = (clusterNum, Features) => {
 		let mlApiUrl = "/get_kmeans_cluster/";
+
 		// replacing space with _ for sending to serve
 		let featuresToAPI = Features.map((item) => item.replace(/ /g, "_"));
 		let mlRequest = {
 			"selected features": featuresToAPI,
 			"number of clusters": clusterNum
 		};
+
 		console.log(mlRequest);
+
+		setIsSending(true);
+
 		axios
 			.post(mlApiUrl, JSON.stringify(mlRequest), {
 				withCredentials: true,
@@ -124,11 +130,43 @@ function DashApp (){
 				});
 				console.log(dataCopy.features.map((f) => f.properties.clusters));
 				setData(dataCopy);
+				setIsSending(false);
+			})
+			.catch(function (error){
+				console.log(error);
+				setIsSending(false);
+			});
+	};
+	//
+	const [ optClusters, setoptClusters ] = useState(null);
+
+	if (userFeatures !== null) {
+		let featuresToOptCluster = userFeatures.map((item) => item.replace(/ /g, "_"));
+
+		let mlOptClusterNumURL = "/get_kmeans_silouhette_optimun_cluster_number/";
+
+		let mlOptNumRequest = {
+			"selected features": featuresToOptCluster
+		};
+		axios
+			.post(mlOptClusterNumURL, JSON.stringify(mlOptNumRequest), {
+				withCredentials: true,
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+					Accept: "application/json",
+					"Content-Type": "application/json"
+				}
+			})
+			.then(function (response){
+				let responseData = response.data;
+				console.log(responseData, "opt");
 			})
 			.catch(function (error){
 				console.log(error);
 			});
-	};
+
+		console.log(featuresToOptCluster, "user");
+	}
 
 	return (
 		<div className='App'>
@@ -154,12 +192,25 @@ function DashApp (){
 							handleSubmit={handleSubmit}
 							userFeatures={userFeatures}
 						/>
-						<MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />
+						{
+							isSending ? <div
+								style={{
+									height: "60px",
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center"
+								}}>
+								<Loading />
+							</div> :
+							<MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />}
 					</div>
 
 					{/*  ------------------ Map Preview ------------------*/}
 					<div className='content4 generalComp'>
+<<<<<<< HEAD
 						<h6 style={{ marginTop: "3px", padding: "5px" }}> Preview Map </h6>
+=======
+>>>>>>> 1deb4d5d7ae4cb95b8bfdc4b3e7c3c29f74515e3
 						<span>
 							<PreviewMap
 								dataProps={data}
@@ -170,9 +221,12 @@ function DashApp (){
 					</div>
 					{/* ------------------ Main Map ------------------*/}
 					<div className='content5 generalComp'>
+<<<<<<< HEAD
 						<h6 style={{ marginTop: "3px", padding: "5px" }}> Model View </h6>
+=======
+>>>>>>> 1deb4d5d7ae4cb95b8bfdc4b3e7c3c29f74515e3
 						<span>
-							<PreviewMap
+							<Mainmap
 								dataProps={data}
 								userSelectedItems={"clusters"}
 								userClickedProp={userClicked}
