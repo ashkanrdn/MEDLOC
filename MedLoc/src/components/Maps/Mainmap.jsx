@@ -33,7 +33,7 @@ function MainMap (props){
 		}
 	}
 
-	// var dissolved = turf.dissolve(dataPopulator, { propertyName: "fid" });
+	// var dissolved = turf.dissolve(dataPopulator, { propertyName: "cluster" });
 
 	//Getting the values from the feature and defining color ranges
 	let columnName = props.userSelectedItems;
@@ -89,7 +89,16 @@ function MainMap (props){
 				}
 
 				console.log(props.dataProps, "props");
+				// if (type === "string") {
+				// 	var dissolved = turf.dissolve(props.dataProps.features, {
+				// 		propertyName: columnName
+				// 	});
+				// 	geojson.current = L.geoJSON(dissolved, { style: styles });
+				// } else {
+				// 	geojson.current = L.geoJSON(props.dataProps, { style: styles });
+				// }
 				geojson.current = L.geoJSON(props.dataProps, { style: styles });
+
 				geojson.current.eachLayer(function (layer){
 					// console.log(layer);
 					layer.bindPopup(`${columnName} : ${layer.feature.properties[columnName]}`);

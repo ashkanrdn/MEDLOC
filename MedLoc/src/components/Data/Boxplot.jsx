@@ -34,6 +34,17 @@ class Boxplot extends React.Component {
 					height={300}
 					theme={VictoryTheme.material}
 					colorScale={"warm"}
+					style={{
+						data: {
+							fill: (datum) => {
+								console.log(datum);
+								return "red";
+							},
+							strokeWidth: (datum) => {
+								return "green";
+							}
+						}
+					}}
 					containerComponent={
 						<VictoryZoomContainer
 							responsive={false}
