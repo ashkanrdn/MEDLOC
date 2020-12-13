@@ -23,12 +23,18 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function Synthesizer (){
+export default function Synthesizer (props){
 	const [ value, setValue ] = React.useState(0);
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
+		props.handleIteration(newValue);
+		// console.log(newValue);
 	};
+
+	const tabs = props.history.map((clusters, i) => {
+		return <Tab label={`Iter-${i}`} key={`Iter-${i}`} {...a11yProps(0)} />;
+	});
 
 	return (
 		<Paper square>
@@ -41,13 +47,14 @@ export default function Synthesizer (){
 				variant='scrollable'
 				scrollButtons='auto'
 				aria-label='scrollable auto tabs example'>
-				<Tab label='Iteration One' {...a11yProps(0)} />
+				{/* <Tab label='Iteration One' {...a11yProps(0)} />
 				<Tab label='Iteration Two' {...a11yProps(1)} />
 				<Tab label='Iteration Three' {...a11yProps(2)} />
 				<Tab label='Iteration Four' {...a11yProps(3)} />
 				<Tab label='Iteration Five' {...a11yProps(4)} />
 				<Tab label='Iteration Six' {...a11yProps(5)} />
-				<Tab label='Iteration Seven' {...a11yProps(6)} />
+				<Tab label='Iteration Seven' {...a11yProps(6)} /> */}
+				{tabs}
 			</Tabs>
 		</Paper>
 	);

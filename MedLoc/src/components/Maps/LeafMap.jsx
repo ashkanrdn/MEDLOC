@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import L from 'leaflet';
-import * as d3 from 'd3';
-import Legend from './Legend';
+import React, { useEffect, useRef } from "react";
+import L from "leaflet";
+import * as d3 from "d3";
+import Legend from "./Legend";
 const Map = (props) => {
 	const mapRef = useRef(null);
 	const geojsonLayer = React.useRef(null);
@@ -27,7 +27,7 @@ const Map = (props) => {
 	let columnName = props.userSelectedItems;
 	let columnValues = dataPopulator.map((f) => f.properties[columnName]);
 
-	let colorScale = d3.scaleLog().domain(d3.extent(columnValues)).range([ 'coral', 'blue' ]);
+	let colorScale = d3.scaleLog().domain(d3.extent(columnValues)).range([ "coral", "blue" ]);
 
 	function styles (feature){
 		return {
@@ -35,8 +35,8 @@ const Map = (props) => {
 
 			weight: 0,
 			opacity: 1,
-			color: 'white',
-			dashArray: '3',
+			color: "white",
+			dashArray: "3",
 			fillOpacity: 1
 		};
 	}
@@ -44,14 +44,14 @@ const Map = (props) => {
 		// layer.options.fillColor = getColor(dataPopulator.no_of_people_no_health_insurance_sum);
 		// 	country.properties.color;
 		const name = hex.properties[mamad];
-		console.log(name, 'karim');
+		// console.log(name, 'karim');
 		// const confirmedText = hex.properties.confirmedText;
 		layer.bindPopup(` ${mamad}, ${name}`);
 	};
 
 	useEffect(() => {
 		let grey = L.tileLayer(
-			'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+			"https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
 			{
 				maxZoom: 20,
 				attribution: ' <a href="https://stadiamaps.com/">Stadia Maps</a>; '
@@ -59,7 +59,7 @@ const Map = (props) => {
 		);
 		// .addTo(mapRef.current);
 
-		mapRef.current = L.map('map', {
+		mapRef.current = L.map("map", {
 			center: [ 0, 0 ],
 			zoom: 2,
 			layers: [ grey ]
@@ -74,7 +74,7 @@ const Map = (props) => {
 		//  mapRef.current.addControl(drawControl);
 	}, []);
 
-	return <div id='map' style={{ width: '100%', height: '100%' }} />;
+	return <div id='map' style={{ width: "100%", height: "100%" }} />;
 };
 
 export default Map;

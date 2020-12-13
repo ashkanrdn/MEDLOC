@@ -85,7 +85,7 @@ export default function TransferList (props){
 	const classes = useStyles();
 	const [ checked, setChecked ] = React.useState([]);
 	const [ preview, setPreview ] = React.useState();
-	console.log(preview, "preview");
+	// console.log(preview, "preview");
 	const [ left, setLeft ] = React.useState(listItemsCleaned.reverse());
 	const [ right, setRight ] = React.useState([]);
 
@@ -162,6 +162,10 @@ export default function TransferList (props){
 		setRight(not(right, rightChecked));
 		setChecked(not(checked, rightChecked));
 	};
+
+	// useEffect(()=>{
+
+	// },[props.history])
 
 	const customList = (title, items) => (
 		<Card>

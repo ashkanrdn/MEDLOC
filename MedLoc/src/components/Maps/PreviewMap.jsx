@@ -11,7 +11,7 @@ import Legend from "./Legend";
 
 function PreviewMap (props){
 	//getting the first object from geojson to extract column names
-	console.log(props.dataProps);
+	// console.log(props.dataProps);
 	let dataPopulator = props.dataProps.features;
 	const geojson = useRef();
 	const legend = useRef(null);
@@ -59,7 +59,7 @@ function PreviewMap (props){
 		colorScale = d3.scaleQuantile().domain(breaks).range(colorsBrewer);
 	} else {
 		breaks = new Set(columnValues);
-		console.log(breaks);
+		// console.log(breaks);
 		colorScale = d3.scaleOrdinal().domain(breaks).range(d3.schemeCategory10);
 	}
 
@@ -93,7 +93,7 @@ function PreviewMap (props){
 					};
 				}
 
-				console.log(props.dataProps, "props");
+				// console.log(props.dataProps, "props");
 				geojson.current = L.geoJSON(props.dataProps, { style: styles });
 				geojson.current.eachLayer(function (layer){
 					// console.log(layer);

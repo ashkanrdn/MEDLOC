@@ -81,12 +81,12 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
 
     #Get the newly made clusters
     clusters = kmeans.labels_
-    
+
     #Get and store the distance to each cluster centroid
     #Note: kmeans.transforms returns the distance to all the cluster centroids the for loop is to get the distance to the assigned cluster
     distance_to_cluster_centroid = []
     for i in range(len(kmeans.transform(data_frame))):
-        
+
         #For debugging
         #print (kmeans.transform(data_frame)[i][kmeans.labels_[i]])
         distance_to_cluster_centroid.append(kmeans.transform(data_frame)[i][kmeans.labels_[i]])
@@ -99,7 +99,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
     #Convert data frame into json format
     clean_data = data_frame.to_json(orient='index')
     parsed = json.loads(clean_data)
-    
+
     #Remap the keys of the json format to be the fid of the hexagon cells
     stored_data = []
     for data in range(len(parsed)):
@@ -112,7 +112,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
     Example of data structure
 
     Data is organized by hexagonal grid cell which contains all the information
-    that was requested for the clustes, additional to the cluster number, 
+    that was requested for the clustes, additional to the cluster number,
     and the distance from the cluster centroid
 
     "1": {
@@ -124,7 +124,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
         "population_no_health_insurance": 0.5324675325
     },
     '''
-    
+
     return lean_data
 
 def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
@@ -145,10 +145,12 @@ def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
 
     sum_of_squared_distances = []
     CH_scores = []
-    K = range(2,10)
+    models = []
+    K = range(2,7)
     for k in K:
         k_means = KMeans(n_clusters=k)
         model = k_means.fit(standarized_data)
+        models.append(model)
         sum_of_squared_distances.append(k_means.inertia_)
         labels = k_means.labels_
         CV_score = metrics.silhouette_score(standarized_data, labels, metric = 'euclidean')
@@ -156,7 +158,10 @@ def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
         CH_scores.append(CH_score)
 
     highest_CH_score = max(CH_scores)
-    ideal_cluster_number = CH_scores.index(highest_CH_score) + 2
+    maxChScoreIndex = CH_scores.index(highest_CH_score)
+    modelChoice = models[maxChScoreIndex]
+    ideal_cluster_number =  maxChScoreIndex + 2
+
     print(ideal_cluster_number)
 
     return str(ideal_cluster_number)

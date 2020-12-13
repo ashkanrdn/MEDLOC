@@ -85,9 +85,7 @@ class WorldTable extends React.Component {
 		// console.log(columnValues);
 		return (
 			<React.Fragment>
-				<div style={{ marginLeft: "5px", marginRight: "5px" }}>
-					<br />
-
+				<div style={{ margin: 0, height: "100%" }}>
 					<MuiThemeProvider theme={this.getMuiTheme()}>
 						<MUIDataTable
 							title={
@@ -103,7 +101,7 @@ class WorldTable extends React.Component {
 								filterType: "dropdown",
 
 								responsive: "stacked",
-								tableBodyHeight: "25vh",
+								tableBodyHeight: "30vh",
 								draggableColumns: { enabled: true, transitionTime: 300 },
 								rowsPerPageOptions: [ 5, 10, 50 ],
 								rowsPerPage: 5,

@@ -25,7 +25,7 @@ class Boxplot extends React.Component {
 	}
 
 	render () {
-		console.log(this.data);
+		// console.log(this.data);
 		return (
 			<div>
 				<VictoryChart

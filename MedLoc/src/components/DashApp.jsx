@@ -25,7 +25,7 @@ import Synthesizer from "./Controls/Synthesizer";
 import MLSetup from "./Controls/MLSetup";
 
 // UI
-import Toggle from "./Interface/Toggle";
+
 import Loading from "./Loading";
 import Navbar from "./Interface/Navbar";
 
@@ -50,7 +50,23 @@ function DashApp (){
 	const fetchUrl =
 		"https://raw.githubusercontent.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/main/Data%20Pipeline/hexagon_collection_master.geojson";
 
+	const [ history, setHistory ] = useState([]);
 	const [ data, setData ] = useState(null);
+
+	const handleHistory = (newCluster) => {
+		let historyCopy = [ ...history ];
+		historyCopy.push(newCluster);
+		setHistory(historyCopy);
+	};
+
+	const handleIteration = (index) => {
+		let ClusterData = history[index];
+		let dataCopy = JSON.parse(JSON.stringify(data));
+		dataCopy.features.forEach((f) => {
+			f.properties.clusters = ClusterData.fidClusterMap[f.properties.fid];
+		});
+		setData(dataCopy);
+	};
 
 	async function getData (){
 		axios
@@ -102,8 +118,6 @@ function DashApp (){
 			"number of clusters": clusterNum
 		};
 
-		console.log(mlRequest);
-
 		setIsSending(true);
 
 		axios
@@ -123,12 +137,12 @@ function DashApp (){
 					f = responseData[f];
 					fidClusterMap[f.fid] = f.clusters.toString();
 				});
+				handleHistory({ features: featuresToAPI, fidClusterMap: fidClusterMap });
 
 				let dataCopy = JSON.parse(JSON.stringify(data));
 				dataCopy.features.forEach((f) => {
 					f.properties.clusters = fidClusterMap[f.properties.fid];
 				});
-				console.log(dataCopy.features.map((f) => f.properties.clusters));
 				setData(dataCopy);
 				setIsSending(false);
 			})
@@ -148,6 +162,8 @@ function DashApp (){
 		let mlOptNumRequest = {
 			"selected features": featuresToOptCluster
 		};
+
+		// console.log(mlOptNumRequest, "ml");
 		axios
 			.post(mlOptClusterNumURL, JSON.stringify(mlOptNumRequest), {
 				withCredentials: true,
@@ -165,9 +181,10 @@ function DashApp (){
 				console.log(error);
 			});
 
-		console.log(featuresToOptCluster, "user");
+		// console.log(featuresToOptCluster, "userml");
 	}
 
+	const handleUpdateCluster = (clusterData) => {};
 	return (
 		<div className='App'>
 			{
@@ -179,7 +196,7 @@ function DashApp (){
 
 					{/*  ------------------Map History Browser ------------------  */}
 					<div className='mainDash generalComp'>
-						<Synthesizer />
+						<Synthesizer history={history} handleIteration={handleIteration} />
 					</div>
 
 					{/*  ------------------ Data Selector ------------------ */}
@@ -202,7 +219,11 @@ function DashApp (){
 								}}>
 								<Loading />
 							</div> :
-							<MLSetup handleSubmit={handleSubmit} userFeatures={userFeatures} />}
+							<MLSetup
+								handleHistory={handleHistory}
+								handleSubmit={handleSubmit}
+								userFeatures={userFeatures}
+							/>}
 					</div>
 
 					{/*  ------------------ Map Preview ------------------*/}
