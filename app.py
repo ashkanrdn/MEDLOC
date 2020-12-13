@@ -130,6 +130,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
 def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
     #Convert the json data into a pandas data frame
     data_frame = pd.read_json(data)
+    fid_column = data_frame['fid']
 
     #Generate normalization of values from 0 to 1
     min_max_scaler = MinMaxScaler()
@@ -164,7 +165,47 @@ def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
 
     print(ideal_cluster_number)
 
-    return str(ideal_cluster_number)
+    #return str(ideal_cluster_number)
+
+#========================================================================
+
+    #Based on the number of clusters selected find kmeans
+    kmeans = KMeans(n_clusters=ideal_cluster_number,random_state=23)
+
+    #Fit the data to generate clusters based on selected attributes
+    kmeans = kmeans.fit(data_frame)
+
+    #Get the newly made clusters
+    clusters = kmeans.labels_
+
+    #Get and store the distance to each cluster centroid
+    #Note: kmeans.transforms returns the distance to all the cluster centroids the for loop is to get the distance to the assigned cluster
+    distance_to_cluster_centroid = []
+    for i in range(len(kmeans.transform(data_frame))):
+
+        #For debugging
+        #print (kmeans.transform(data_frame)[i][kmeans.labels_[i]])
+        distance_to_cluster_centroid.append(kmeans.transform(data_frame)[i][kmeans.labels_[i]])
+
+    #Add newly labels for the cluster data to original data frame an re-add fid column
+    data_frame['fid'] = fid_column
+    data_frame["clusters"] = clusters
+    data_frame['distance_to_cluster_centroid'] = distance_to_cluster_centroid
+
+    #Convert data frame into json format
+    clean_data = data_frame.to_json(orient='index')
+    parsed = json.loads(clean_data)
+
+    #Remap the keys of the json format to be the fid of the hexagon cells
+    stored_data = []
+    for data in range(len(parsed)):
+        all_the_data = parsed[str(data)]
+        stored_data.append(all_the_data)
+
+    lean_data = {int(key):value for key,value in zip(fid_column,stored_data)}
+
+    return lean_data
+
 
 #Creation of the Flask Application
 app = Flask(__name__,static_folder='./MedLoc/build', static_url_path='/')
