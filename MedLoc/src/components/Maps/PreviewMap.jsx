@@ -17,6 +17,7 @@ function PreviewMap (props){
 	const legend = useRef(null);
 	const map = useRef();
 	const featureName = useRef(null);
+	const MapName = useRef(null);
 
 	if (dataPopulator !== null) {
 		for (var key in dataPopulator) {
@@ -110,13 +111,23 @@ function PreviewMap (props){
 				if (featureName.current !== null) {
 					map.current.leafletElement.removeControl(featureName.current);
 				}
+				if (MapName.current !== null) {
+					map.current.leafletElement.removeControl(MapName.current);
+				}
 
 				legend.current = L.control({ position: "topright" });
 				featureName.current = L.control({ position: "topright" });
+				MapName.current = L.control({ position: "bottomright" });
 
 				featureName.current.onAdd = () => {
 					const div = L.DomUtil.create("div", "info titleMap");
 					div.innerHTML = `<p> ${columnNameClean}</p>`;
+					return div;
+				};
+
+				MapName.current.onAdd = () => {
+					const div = L.DomUtil.create("div", "info titleMap");
+					div.innerHTML = `<p> Preview Map </p>`;
 					return div;
 				};
 
@@ -133,9 +144,9 @@ function PreviewMap (props){
 					breaks = Array.from(breaks);
 					let breaksCopy = Array.from(breaks).slice(0, 7);
 					// console.log(breaksCopy);
-					// if (breaks > 7 && type === "string") {
-					//   breaksCopy.push("Others...");
-					// }
+					if (breaks > 7 && type === "string") {
+						breaksCopy.push("Others...");
+					}
 					for (let i = 0; i < breaksCopy.length; i++) {
 						if (type === "number") {
 							let isinteger = breaksCopy[i] % 1 === 0;
@@ -175,6 +186,7 @@ function PreviewMap (props){
 				geojson.current.addTo(map.current.leafletElement);
 				featureName.current.addTo(map.current.leafletElement);
 				legend.current.addTo(map.current.leafletElement);
+				MapName.current.addTo(map.current.leafletElement);
 			}
 		},
 		[ columnName, props.dataProps ]
@@ -189,7 +201,7 @@ function PreviewMap (props){
 			center={center}
 			zoom={10}
 			style={{ height: "100%", width: "100%" }}>
-			<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/wmts?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
+			<TileLayer url='	https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
 		</Map>
 	);
 }

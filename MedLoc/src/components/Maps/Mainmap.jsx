@@ -1,16 +1,15 @@
 /* eslint-disable no-unreachable */
 import React, { useState, useEffect, useRef } from "react";
 
-import { Map, GeoJSON, TileLayer, LayersControl, MapContainer } from "react-leaflet";
+import { Map, GeoJSON, TileLayer, LayersControl } from "react-leaflet";
 import FeatureName from "./Legend";
 import HighlightedGeoJson from "./HighlightedGeoJson";
 import * as ss from "simple-statistics";
 import * as d3 from "d3";
 import L from "leaflet";
 import Legend from "./Legend";
-// import { clustersDbscan, point, dissolve } from "@turf/turf";
 
-function Mainmap (props){
+function MainMap (props){
 	//getting the first object from geojson to extract column names
 	console.log(props.dataProps);
 	let dataPopulator = props.dataProps.features;
@@ -18,6 +17,7 @@ function Mainmap (props){
 	const legend = useRef(null);
 	const map = useRef();
 	const featureName = useRef(null);
+	const MapName = useRef(null);
 
 	if (dataPopulator !== null) {
 		for (var key in dataPopulator) {
@@ -32,9 +32,6 @@ function Mainmap (props){
 		}
 	}
 
-	// disolving
-	// var dissolved = dissolve(dataPopulator, { propertyName: "combine" });
-
 	//Getting the values from the feature and defining color ranges
 	let columnName = props.userSelectedItems;
 	let columnNameClean = columnName.replace(/_/g, " ");
@@ -44,15 +41,7 @@ function Mainmap (props){
 	let breaks;
 	let colorScale;
 	if (type !== "string") {
-		let colorsBrewer = [
-			"#f6eff7",
-			"#d0d1e6",
-			"#a6bddb",
-			"#67a9cf",
-			"#3690c0",
-			"#02818a",
-			"#016450"
-		];
+		let colorsBrewer = [ "#8dd3c7,", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462" ];
 		let groups = ss.ckmeans(columnValues, 7);
 		breaks = groups.map((cluster) => {
 			return cluster[0];
@@ -65,6 +54,14 @@ function Mainmap (props){
 		console.log(breaks);
 		colorScale = d3.scaleOrdinal().domain(breaks).range(d3.schemeCategory10);
 	}
+
+	// let extent = d3.extent(columnValues);
+	// //Linear breaks
+	// let colorScale = d3.scaleLinear().domain(d3.extent(columnValues)).range([ "coral", "blue" ]);
+	// let colorScaleCategorical = d3
+	// 	.scaleLinear()
+	// 	.domain(d3.extent(columnValues))
+	// 	.range([ "coral", "blue" ]);
 
 	//Coloring each feature based on the user selected values from the list selector
 
@@ -106,13 +103,23 @@ function Mainmap (props){
 				if (featureName.current !== null) {
 					map.current.leafletElement.removeControl(featureName.current);
 				}
+				if (MapName.current !== null) {
+					map.current.leafletElement.removeControl(MapName.current);
+				}
 
 				legend.current = L.control({ position: "topright" });
 				featureName.current = L.control({ position: "topright" });
+				MapName.current = L.control({ position: "bottomright" });
 
 				featureName.current.onAdd = () => {
 					const div = L.DomUtil.create("div", "info titleMap");
 					div.innerHTML = `<p> ${columnNameClean}</p>`;
+					return div;
+				};
+
+				MapName.current.onAdd = () => {
+					const div = L.DomUtil.create("div", "info titleMap");
+					div.innerHTML = `<p> Main Map </p>`;
 					return div;
 				};
 
@@ -171,6 +178,7 @@ function Mainmap (props){
 				geojson.current.addTo(map.current.leafletElement);
 				featureName.current.addTo(map.current.leafletElement);
 				legend.current.addTo(map.current.leafletElement);
+				MapName.current.addTo(map.current.leafletElement);
 			}
 		},
 		[ columnName, props.dataProps ]
@@ -185,13 +193,8 @@ function Mainmap (props){
 			center={center}
 			zoom={10}
 			style={{ height: "100%", width: "100%" }}>
-			<LayersControl position='bottomleft'>
-				<LayersControl.BaseLayer checked name='OpenStreetMap.BlackAndWhite'>
-					<TileLayer url='https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/wmts?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
-				</LayersControl.BaseLayer>
-				<LayersControl.Overlay name='Marker with popup' />
-			</LayersControl>
+			<TileLayer url='	https://api.mapbox.com/styles/v1/aradnia/ckilrttol26ng17pa9l4m0ucd/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXJhZG5pYSIsImEiOiJjanlhZDdienQwNGN0M212MHp3Z21mMXhvIn0.lPiKb_x0vr1H62G_jHgf7w' />
 		</Map>
 	);
 }
-export default Mainmap;
+export default MainMap;
