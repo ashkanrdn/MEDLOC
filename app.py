@@ -20,7 +20,7 @@ def get_data(url):
     # github_request = requests.get(url)
 
     #Turn data to JSON format
-    with open("collection_data_hexagon.geojson") as jsonFile:
+    with open("hexagon_collection_master.geojson") as jsonFile:
         data = json.loads(jsonFile.read())
 
     #Get all the features from the JSON data
