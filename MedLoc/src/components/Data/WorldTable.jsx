@@ -19,10 +19,6 @@ class WorldTable extends React.Component {
 		return { state: 0 };
 	}
 
-	componentDidMount () {
-		const height = document.getElementById("tble").clientHeight;
-		this.setState({ height });
-	}
 	getMuiTheme = () =>
 		createMuiTheme({
 			overrides: {

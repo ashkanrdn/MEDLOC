@@ -11,9 +11,8 @@ import "../styles/dashStyle.css";
 import WorldTable from "./Data/WorldTable";
 
 //Visualizations
-import PieViz from "./Data/PieViz";
+
 import BoxPlot from "./Data/Boxplot";
-import Viz from "./Data/Viz";
 
 // Maps
 import Mainmap from "./Maps/Mainmap";
@@ -34,17 +33,8 @@ import Navbar from "./Interface/Navbar";
 function DashApp (){
 	// To Do : useMemo hook for improving performance for the functions that are heavy
 	const stageCanvasRef = useRef(null);
-	const [ divHeight, setDivHeight ] = useState("200px");
-	const [ isSending, setIsSending ] = useState(false);
 
-	useEffect(() => {
-		// The 'current' property contains info of the reference:
-		// align, title, ... , width, height, etc.
-		if (stageCanvasRef.current) {
-			setDivHeight(stageCanvasRef.current.offsetHeight);
-			// let width  = stageCanvasRef.current.offsetWidth;
-		}
-	});
+	const [ isSending, setIsSending ] = useState(false);
 
 	//Fetching data
 	const fetchUrl =
@@ -152,7 +142,6 @@ function DashApp (){
 			});
 	};
 	//
-	const [ optClusters, setoptClusters ] = useState(null);
 
 	if (userFeatures !== null) {
 		let featuresToOptCluster = userFeatures.map((item) => item.replace(/ /g, "_"));
@@ -264,7 +253,6 @@ function DashApp (){
 							style={{ padding: "5px" }}
 							dataProps={data}
 							userFeaturesProps={userFeatures}
-							heightProp={divHeight}
 						/>
 					</div>
 				</div> :
