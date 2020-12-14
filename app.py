@@ -55,8 +55,8 @@ def get_data(url):
     return clean_data_frame_JSON
 
 '''
-Funtion to generate a set of cluster based on the desired
-attributes and selectec number of clusters
+Function to generate a set of cluster based on the desired
+attributes and selected number of clusters
 '''
 def kmeans_cluster_generator(data,features=None,n_clusters=5):
     #Convert the json data into a pandas data frame
