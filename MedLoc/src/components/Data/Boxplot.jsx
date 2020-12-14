@@ -6,7 +6,8 @@ import {
 	VictoryBrushContainer,
 	VictoryAxis,
 	VictoryTheme,
-	VictoryBoxPlot
+	VictoryBoxPlot,
+	VictoryLabel
 } from "victory";
 
 class Boxplot extends React.Component {
@@ -29,22 +30,11 @@ class Boxplot extends React.Component {
 		return (
 			<div>
 				<VictoryChart
-					domainPadding={20}
+					domainPadding={10}
 					width={500}
 					height={300}
 					theme={VictoryTheme.material}
-					colorScale={"warm"}
-					style={{
-						data: {
-							fill: (datum) => {
-								console.log(datum);
-								return "red";
-							},
-							strokeWidth: (datum) => {
-								return "green";
-							}
-						}
-					}}
+					// colorScale={"warm"}
 					containerComponent={
 						<VictoryZoomContainer
 							responsive={false}
@@ -53,7 +43,13 @@ class Boxplot extends React.Component {
 							onZoomDomainChange={this.handleZoom.bind(this)}
 						/>
 					}>
+					<VictoryLabel text='Data Visualization' x={225} y={290} textAnchor='middle' />
 					<VictoryBoxPlot
+						style={{
+							data: {
+								fill: "tomato"
+							}
+						}}
 						// boxWidth={20}
 						data={this.props.data.features.map((f) => {
 							return {
