@@ -9,6 +9,7 @@ import {
   VictoryBoxPlot,
   VictoryLabel,
 } from "victory";
+import * as d3 from "d3";
 
 class Boxplot extends React.Component {
   //   constructor() {
@@ -16,6 +17,10 @@ class Boxplot extends React.Component {
   //     this.state = {};
   //   }
   state = {};
+
+  breaks = new Set(this.props.data.features.map((f) => f.properties.clusters));
+  // console.log(breaks);
+  colorScale = d3.scaleOrdinal().domain(this.breaks).range(d3.schemeCategory10);
 
   handleZoom(domain) {
     this.setState({ selectedDomain: domain });
@@ -25,54 +30,15 @@ class Boxplot extends React.Component {
     this.setState({ zoomDomain: domain });
   }
 
-<<<<<<< HEAD
-	render () {
-		// console.log(this.data);
-		return (
-			<div>
-				<VictoryChart
-					domainPadding={10}
-					width={500}
-					height={300}
-					theme={VictoryTheme.material}
-					// colorScale={"warm"}
-					containerComponent={
-						<VictoryZoomContainer
-							responsive={false}
-							zoomDimension='x'
-							zoomDomain={this.state.zoomDomain}
-							onZoomDomainChange={this.handleZoom.bind(this)}
-						/>
-					}>
-					<VictoryLabel text='Data Visualization' x={225} y={290} textAnchor='middle' />
-					<VictoryBoxPlot
-						style={{
-							data: {
-								fill: "tomato"
-							}
-						}}
-						// boxWidth={20}
-						data={this.props.data.features.map((f) => {
-							return {
-								x: f.properties.clusters,
-								y: f.properties[this.props.columnName]
-							};
-						})}
-					/>
-				</VictoryChart>
-			</div>
-		);
-	}
-=======
   render() {
     // console.log(this.data);
     return (
       <div>
         <VictoryChart
-          domainPadding={10}
+          domainPadding={30}
           width={500}
           height={300}
-          theme={VictoryTheme.material}
+          //   theme={VictoryTheme.material}
           // colorScale={"warm"}
           containerComponent={
             <VictoryZoomContainer
@@ -84,18 +50,31 @@ class Boxplot extends React.Component {
           }
         >
           <VictoryLabel
-            text="Data Visualization"
+            text={`${this.props.columnName} by cluster`}
             x={225}
             y={290}
             textAnchor="middle"
           />
           <VictoryBoxPlot
-            // style={{
-            // 	data: {
-            // 		fill: "tomato"
-            // 	}
-            // }}
-            // boxWidth={20}
+            style={{
+              //   min: { stroke: "tomato" },
+              //   max: { stroke: "orange" },
+              q1: {
+                fill: (d) => {
+                  console.log(d);
+                  return this.colorScale(d.datum.x);
+                },
+              },
+              q3: {
+                fill: (d) => {
+                  console.log(d);
+                  return this.colorScale(d.datum.x);
+                },
+              },
+              median: { stroke: "white", strokeWidth: 2 },
+              //   minLabels: { fill: "tomato" },
+              //   maxLabels: { fill: "orange" },
+            }}
             data={this.props.data.features.map((f) => {
               return {
                 x: f.properties.clusters,
@@ -107,6 +86,5 @@ class Boxplot extends React.Component {
       </div>
     );
   }
->>>>>>> af547bb2dff2b8cd51b7ab721aee217945be3f69
 }
 export default Boxplot;
