@@ -34,7 +34,16 @@ class Boxplot extends React.Component {
 					domainPadding={10}
 					width={500}
 					height={300}
-					theme={VictoryTheme.material}>
+					theme={VictoryTheme.material}
+					// colorScale={"warm"}
+					containerComponent={
+						<VictoryZoomContainer
+							responsive={false}
+							zoomDimension='x'
+							zoomDomain={this.state.zoomDomain}
+							onZoomDomainChange={this.handleZoom.bind(this)}
+						/>
+					}>
 					<VictoryLabel text='Data Visualization' x={225} y={290} textAnchor='middle' />
 					<VictoryBoxPlot
 						style={{
