@@ -84,9 +84,9 @@ class Boxplot extends React.Component {
           }
         >
           <VictoryLabel
-            text={`${this.props.columnName} by cluster`}
+            text="Data Visualization"
             x={225}
-            y={20}
+            y={290}
             textAnchor="middle"
           />
           <VictoryBoxPlot

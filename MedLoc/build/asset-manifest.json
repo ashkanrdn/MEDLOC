@@ -3,6 +3,7 @@
     "main.css": "/static/css/main.ca6681c9.chunk.css",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "main.js": "/static/js/main.7efb313d.chunk.js",
     "main.js.map": "/static/js/main.7efb313d.chunk.js.map",
 =======
@@ -22,6 +23,10 @@
 =======
     "main.js": "/static/js/main.eddcb1ea.chunk.js",
     "main.js.map": "/static/js/main.eddcb1ea.chunk.js.map",
+=======
+    "main.js": "/static/js/main.8222fef1.chunk.js",
+    "main.js.map": "/static/js/main.8222fef1.chunk.js.map",
+>>>>>>> parent of af547bb... added title to box plot
     "runtime-main.js": "/static/js/runtime-main.df597cc8.js",
     "runtime-main.js.map": "/static/js/runtime-main.df597cc8.js.map",
     "static/css/2.b4ebbe46.chunk.css": "/static/css/2.b4ebbe46.chunk.css",
@@ -47,6 +52,7 @@
 =======
     "static/js/2.fb22502f.chunk.js",
     "static/css/main.ca6681c9.chunk.css",
+<<<<<<< HEAD
     "static/js/main.eddcb1ea.chunk.js"
 >>>>>>> af547bb2dff2b8cd51b7ab721aee217945be3f69
 =======
@@ -54,5 +60,8 @@
     "static/css/main.ca6681c9.chunk.css",
     "static/js/main.a69bd922.chunk.js"
 >>>>>>> parent of 32a6dfa... +
+=======
+    "static/js/main.8222fef1.chunk.js"
+>>>>>>> parent of af547bb... added title to box plot
   ]
 }
