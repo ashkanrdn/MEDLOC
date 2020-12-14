@@ -17,10 +17,11 @@ it and eliminating part of the geolocation data
 '''
 def get_data(url):
     #Get main data file from Github Repo
-    github_request = requests.get(url)
+    # github_request = requests.get(url)
 
     #Turn data to JSON format
-    data = github_request.json()
+    with open("hexagon_collection_master.geojson") as jsonFile:
+        data = json.loads(jsonFile.read())
 
     #Get all the features from the JSON data
     features = [f["properties"] for f in data["features"]]
