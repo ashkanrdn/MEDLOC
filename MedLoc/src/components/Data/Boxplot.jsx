@@ -18,13 +18,6 @@ class Boxplot extends React.Component {
   //   }
   state = {};
 
-  breaks = new Set(this.props.data.features.map((f) => f.properties.clusters));
-  breaks = Array.from(this.breaks).sort((a, b) => {
-    return +a - +b;
-  });
-  // console.log(breaks);
-  colorScale = d3.scaleOrdinal().domain(this.breaks).range(d3.schemeCategory10);
-
   handleZoom(domain) {
     this.setState({ selectedDomain: domain });
   }
@@ -34,12 +27,21 @@ class Boxplot extends React.Component {
   }
 
   render() {
-    // console.log(this.data);
+    let breaks = Array.from(
+      new Set(this.props.data.features.map((f) => f.properties.clusters))
+    ).sort((a, b) => {
+      return +a - +b;
+    });
+    console.log(breaks);
+    let colorScale = d3
+      .scaleOrdinal()
+      .domain(breaks)
+      .range(d3.schemeCategory10);
     return (
       <div>
         <VictoryChart
           domainPadding={30}
-          width={500}
+          width={600}
           height={300}
           //   theme={VictoryTheme.material}
           // colorScale={"warm"}
@@ -59,19 +61,19 @@ class Boxplot extends React.Component {
             textAnchor="middle"
           />
           <VictoryBoxPlot
+            sortKey={(datum) => +datum.x}
+            // sortOrder="descending"
             style={{
               //   min: { stroke: "tomato" },
               //   max: { stroke: "orange" },
               q1: {
                 fill: (d) => {
-                  console.log(d);
-                  return this.colorScale(d.datum.x);
+                  return colorScale(d.datum.x);
                 },
               },
               q3: {
                 fill: (d) => {
-                  console.log(d);
-                  return this.colorScale(d.datum.x);
+                  return colorScale(d.datum.x);
                 },
               },
               median: { stroke: "white", strokeWidth: 2 },

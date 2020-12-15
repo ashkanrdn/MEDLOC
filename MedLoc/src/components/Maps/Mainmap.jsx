@@ -61,6 +61,10 @@ function MainMap(props) {
     colorScale = d3.scaleQuantile().domain(breaks).range(colorsBrewer);
   } else {
     breaks = new Set(columnValues);
+    breaks = Array.from(breaks).sort((a, b) => {
+      return +a - +b;
+    });
+    console.log(breaks);
     // console.log(breaks);
     colorScale = d3.scaleOrdinal().domain(breaks).range(d3.schemeCategory10);
   }
