@@ -19,6 +19,9 @@ class Boxplot extends React.Component {
   state = {};
 
   breaks = new Set(this.props.data.features.map((f) => f.properties.clusters));
+  breaks = Array.from(this.breaks).sort((a, b) => {
+    return +a - +b;
+  });
   // console.log(breaks);
   colorScale = d3.scaleOrdinal().domain(this.breaks).range(d3.schemeCategory10);
 
