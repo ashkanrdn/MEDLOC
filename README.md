@@ -3,6 +3,9 @@ Deployment code for the MedLoc API in Heroku
 
 # Dashboard development code
 
+# API documentation
+This API is built using the Flask framwork on Python
+
 # Install requirements to run API locally
 - Copy the github repository into your machine
 - Run terminal as administrator to avoid any conflics due to limited access
