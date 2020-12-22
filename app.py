@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify, make_response
-from flask_restful import Api, Resource, reqparse
 import pandas as pd
 import io
 import requests
 import json
+from flask import Flask, request, jsonify, make_response
+from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
@@ -15,12 +15,10 @@ Function to get all the data from the github repo
 and prepare it, by cleaning categorical data from
 it and eliminating part of the geolocation data
 '''
-def get_data(url):
-    #Get main data file from Github Repo
-    # github_request = requests.get(url)
+def get_data():
 
-    #Turn data to JSON format
-    with open("hexagon_collection_master.geojson") as jsonFile:
+    #Get the data from the githun root folder and turn it into JSON format
+    with open("Data/hexagon_collection_master.geojson") as jsonFile:
         data = json.loads(jsonFile.read())
 
     #Get all the features from the JSON data
@@ -28,10 +26,6 @@ def get_data(url):
 
     #Turn all the data into a pandas data frame
     df = pd.DataFrame.from_records(features)
-
-    #Get all columns in data frame
-    #Print columns to ensure they are all there
-    #print(df.columns)
 
     #List of columns to exclude
     columns_to_exclude = ['id', 'top', 'right', 'bottom',"predominant_race_by_population_per_cell"]
@@ -42,16 +36,13 @@ def get_data(url):
     #Merge found columns with existing list
     columns_to_exclude = columns_to_exclude + withName
 
-    #See the columns to be excluded
-    #Print all columns to be excluded
-    #print(columns_to_exclude)
-
     #Drop the excluded columns from the main data frame
     clean_data_frame = df.drop(columns_to_exclude,axis=1)
 
     #Convert data frame to JSON format
     clean_data_frame_JSON = clean_data_frame.to_json()
 
+    #For debugging
     #print(clean_data_frame)
     return clean_data_frame_JSON
 
@@ -60,6 +51,7 @@ Function to generate a set of cluster based on the desired
 attributes and selected number of clusters
 '''
 def kmeans_cluster_generator(data,features=None,n_clusters=5):
+    
     #Convert the json data into a pandas data frame
     data_frame = pd.read_json(data)
     fid_column = data_frame['fid']
@@ -107,6 +99,7 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
         all_the_data = parsed[str(data)]
         stored_data.append(all_the_data)
 
+    #Organize the data into a dictionary
     lean_data = {int(key):value for key,value in zip(fid_column,stored_data)}
 
     '''
@@ -128,7 +121,12 @@ def kmeans_cluster_generator(data,features=None,n_clusters=5):
 
     return lean_data
 
+'''
+Function to find the optimal number of clusters
+based on the selected features
+'''
 def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
+    
     #Convert the json data into a pandas data frame
     data_frame = pd.read_json(data)
     fid_column = data_frame['fid']
@@ -145,9 +143,12 @@ def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
 
     standarized_data = StandardScaler().fit_transform(data_frame)
 
+    #Lists to store scores to determine optimal cluster
     sum_of_squared_distances = []
     CH_scores = []
     models = []
+
+    #Loop to generates cluster and find the optimal number, ranging from 2 to 7
     K = range(2,7)
     for k in K:
         k_means = KMeans(n_clusters=k)
@@ -164,49 +165,12 @@ def kmeans_silouhette_method_optimun_cluster_number(data,features=None):
     modelChoice = models[maxChScoreIndex]
     ideal_cluster_number =  maxChScoreIndex + 2
 
+    #For debugging
     print(ideal_cluster_number)
 
-    #return str(ideal_cluster_number)
-
-#========================================================================
-
-    #Based on the number of clusters selected find kmeans
-    kmeans = KMeans(n_clusters=ideal_cluster_number,random_state=23)
-
-    #Fit the data to generate clusters based on selected attributes
-    kmeans = kmeans.fit(data_frame)
-
-    #Get the newly made clusters
-    clusters = kmeans.labels_
-
-    #Get and store the distance to each cluster centroid
-    #Note: kmeans.transforms returns the distance to all the cluster centroids the for loop is to get the distance to the assigned cluster
-    distance_to_cluster_centroid = []
-    for i in range(len(kmeans.transform(data_frame))):
-
-        #For debugging
-        #print (kmeans.transform(data_frame)[i][kmeans.labels_[i]])
-        distance_to_cluster_centroid.append(kmeans.transform(data_frame)[i][kmeans.labels_[i]])
-
-    #Add newly labels for the cluster data to original data frame an re-add fid column
-    data_frame['fid'] = fid_column
-    data_frame["clusters"] = clusters
-    data_frame['distance_to_cluster_centroid'] = distance_to_cluster_centroid
-
-    #Convert data frame into json format
-    clean_data = data_frame.to_json(orient='index')
-    parsed = json.loads(clean_data)
-
-    #Remap the keys of the json format to be the fid of the hexagon cells
-    stored_data = []
-    for data in range(len(parsed)):
-        all_the_data = parsed[str(data)]
-        stored_data.append(all_the_data)
-
-    lean_data = {int(key):value for key,value in zip(fid_column,stored_data)}
-
-    return lean_data
-
+    #Run kmeans clustering function to generate clusters, based on the optimal number for the selected features
+    cluster_data = kmeans_cluster_generator(data,features,ideal_cluster_number)
+    return cluster_data
 
 #Creation of the Flask Application
 app = Flask(__name__,static_folder='./MedLoc/build', static_url_path='/')
@@ -219,61 +183,52 @@ cluster_post_arguments.add_argument("data", type=str)
 cluster_post_arguments.add_argument("selected features", type=str, action='append', default=[])
 cluster_post_arguments.add_argument("number of clusters", type=int)
 
+#The set of request for the APi begin here
 
+#Initial web request
 @app.route('/',methods=['POST', 'GET', 'OPTIONS'])
 @cross_origin(supports_credentials=True)
+
+
 def index():
     return app.send_static_file('index.html')
 
+#POST request to get the clusters for the data based on the siluhette method to get the optimal number
 @app.route('/get_kmeans_silouhette_optimun_cluster_number/', methods=['POST'])
 def kmeans_silouhette_cluster_number():
 
-    #Github URL data repo location
-    github_url = "https://github.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/raw/main/Data%20Pipeline/hexagon_collection_master.geojson"
-
-    #Get and clean data from the github repo & test variables
-    #Data to send to the API
-    data = get_data(github_url)
+    #Get the data from the hexagon_collection_master document in the root folder to the Github
+    data = get_data()
 
     #Define and get arguments from request
     arguments = cluster_post_arguments.parse_args()
     selected_attributes = arguments['selected features']
-    #number_of_cluster = arguments['number of clusters']
-    #selected_attributes = request.form['selected features']
-    #number_of_cluster = request.form['number of clusters']
 
+    #Function to get the ideal cluster 
     ideal_cluster_number = kmeans_silouhette_method_optimun_cluster_number(data, selected_attributes)
 
     return ideal_cluster_number
 
+#POST reuqest to get the set of cluster based on user input
 @app.route('/get_kmeans_cluster/', methods=['POST'])
 def post_kmeans_cluster():
 
-    #Github URL data repo location
-    github_url = "https://github.com/AhmadzadehSanaz/Studio-Lab-Healthcare-Ellinger/raw/main/Data%20Pipeline/hexagon_collection_master.geojson"
-
-    #Get and clean data from the github repo & test variables
-    #Data to send to the API
-    data = get_data(github_url)
+    #Get the data from the hexagon_collection_master document in the root folder to the Github
+    data = get_data()
 
     #Define and get arguments from request
     arguments = cluster_post_arguments.parse_args()
     selected_attributes = arguments['selected features']
     number_of_cluster = arguments['number of clusters']
-    #selected_attributes = request.form['selected features']
-    #number_of_cluster = request.form['number of clusters']
 
     #Run Kmeans cluster algorithm
     cluster_data = kmeans_cluster_generator(data, selected_attributes, number_of_cluster)
 
-    #Testing alternatives
-    #return make_response(jsonify(cluster_data))
-    #return "<body><pre style ='word-wrap: break-word; white-space: pre-wrap;'>" + json.dumps(cluster_json) + "</pre></body>"
-    #return json.dumps(cluster_data)
-
     #For debuging
     #print(cluster_data)
     return cluster_data
-#Run
+
+#Run the API
+#Turn debug=False when deploying to the web / For more information look at Flask lib. 
 if __name__ == "__main__":
     app.run(debug=True)
