@@ -11,6 +11,21 @@ run  `npm install` to download the dependencies .
 
 after downloading the dependencies you can run the development server using following scripts.
 
+### App structure
+
+
+Main app component is DashApp which holds all the main logics and children components.
+Main data gets fetched within the DashApp and then gets passed to the children components via props.
+UI elements are built using Material-UI components.
+
+## Deploying to heroku
+
+for deploying the app to the heroku run `npm run build` to build the app after pushing the built code to the github
+heroku will automatically re-deploy the server.
+
+
+
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -56,10 +71,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-### App structure
-
-
-Main app component is DashApp which holds all the main logics and children components.
-Main data gets fetched within the DashApp and then gets passed to the children components via props.
 
 
