@@ -38,5 +38,7 @@ See list_of_features.txt to fins what are the avaiable features to test the appl
 
 For more information about what these request actually do look at the documentation on the app.py file
 
+To test the APi you can either use POSTMAN or the requests_tester.py file
+
 # Procfile
 This document is a WSGI HTTP server that serves the Flask application at Heroku.
