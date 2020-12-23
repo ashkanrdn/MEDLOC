@@ -2,12 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import { Map, GeoJSON, TileLayer, LayersControl } from "react-leaflet";
-import FeatureName from "./Legend";
-import HighlightedGeoJson from "./HighlightedGeoJson";
+
 import * as ss from "simple-statistics";
 import * as d3 from "d3";
 import L from "leaflet";
-import Legend from "./Legend";
 
 function PreviewMap (props){
 	//getting the first object from geojson to extract column names
@@ -24,8 +22,6 @@ function PreviewMap (props){
 			if (dataPopulator.hasOwnProperty(key)) {
 				let firstProp = dataPopulator[key];
 				let listItems = Object.keys(firstProp.properties);
-
-				// let listValue = Object.values(firstProp.properties);
 
 				break;
 			}
@@ -62,14 +58,6 @@ function PreviewMap (props){
 		// console.log(breaks);
 		colorScale = d3.scaleOrdinal().domain(breaks).range(d3.schemeCategory10);
 	}
-
-	// let extent = d3.extent(columnValues);
-	// //Linear breaks
-	// let colorScale = d3.scaleLinear().domain(d3.extent(columnValues)).range([ "coral", "blue" ]);
-	// let colorScaleCategorical = d3
-	// 	.scaleLinear()
-	// 	.domain(d3.extent(columnValues))
-	// 	.range([ "coral", "blue" ]);
 
 	//Coloring each feature based on the user selected values from the list selector
 

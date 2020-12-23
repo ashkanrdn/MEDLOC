@@ -11,9 +11,8 @@ import "../styles/dashStyle.css";
 import WorldTable from "./Data/WorldTable";
 
 //Visualizations
-import PieViz from "./Data/PieViz";
+
 import BoxPlot from "./Data/Boxplot";
-import Viz from "./Data/Viz";
 
 // Maps
 import Mainmap from "./Maps/Mainmap";
@@ -155,7 +154,6 @@ function DashApp (){
 			});
 	};
 	//
-	const [ optClusters, setoptClusters ] = useState(null);
 
 	// if (userFeatures !== null) {
 	// 	let featuresToOptCluster = userFeatures.map((item) => item.replace(/ /g, "_"));
